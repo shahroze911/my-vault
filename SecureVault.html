@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SecureVault — Password Manager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.0.0/tabler-icons.min.css" />
+<style>
+/* ── Reset & Base ─────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:        #f4f5f7;
+  --surface:   #ffffff;
+  --surface2:  #f9fafb;
+  --border:    #e5e7eb;
+  --border2:   #d1d5db;
+  --text:      #111827;
+  --text2:     #4b5563;
+  --text3:     #9ca3af;
+  --accent:    #4f46e5;
+  --accent-bg: #eef2ff;
+  --accent-bd: #c7d2fe;
+  --accent-tx: #3730a3;
+  --danger:    #dc2626;
+  --danger-bg: #fef2f2;
+  --danger-bd: #fca5a5;
+  --success:   #16a34a;
+  --success-bg:#f0fdf4;
+  --success-bd:#86efac;
+  --warn:      #d97706;
+  --warn-bg:   #fffbeb;
+  --warn-bd:   #fcd34d;
+  --radius:    8px;
+  --shadow:    0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.05);
+  --shadow-md: 0 4px 16px rgba(0,0,0,.10), 0 2px 6px rgba(0,0,0,.06);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:        #0f1117;
+    --surface:   #1a1d27;
+    --surface2:  #22263a;
+    --border:    #2e3347;
+    --border2:   #3d4460;
+    --text:      #f1f2f6;
+    --text2:     #9ba3c0;
+    --text3:     #5c647e;
+    --accent:    #6366f1;
+    --accent-bg: #1e1b4b;
+    --accent-bd: #3730a3;
+    --accent-tx: #a5b4fc;
+    --danger:    #f87171;
+    --danger-bg: #2d1515;
+    --danger-bd: #7f1d1d;
+    --success:   #4ade80;
+    --success-bg:#052e16;
+    --success-bd:#14532d;
+    --warn:      #fbbf24;
+    --warn-bg:   #1c1400;
+    --warn-bd:   #78350f;
+  }
+}
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 15px;
+  color: var(--text);
+  background: var(--bg);
+  min-height: 100vh;
+}
+input, select, textarea, button {
+  font-family: inherit;
+  font-size: 14px;
+}
+input[type=text], input[type=email], input[type=password], textarea, select {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(99,102,241,.15);
+}
+input::placeholder, textarea::placeholder { color: var(--text3); }
+
+/* ── Layout ──────────────────────────────────────────── */
+#app { max-width: 760px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ── Loading ─────────────────────────────────────────── */
+#loading-screen {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; min-height: 70vh; gap: 16px;
+}
+.spinner {
+  width: 40px; height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Auth ────────────────────────────────────────────── */
+.auth-card {
+  max-width: 420px; margin: 3rem auto 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: var(--shadow-md);
+}
+.brand {
+  display: flex; align-items: center; gap: 12px;
+  justify-content: center; margin-bottom: 1.75rem;
+}
+.brand-icon {
+  width: 52px; height: 52px; border-radius: 14px;
+  background: var(--accent-bg); color: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px;
+}
+.brand-name { font-size: 22px; font-weight: 600; }
+.brand-tagline { font-size: 13px; color: var(--text2); margin-top: 2px; }
+.auth-title { font-size: 18px; font-weight: 600; margin-bottom: .25rem; }
+.auth-sub { font-size: 13px; color: var(--text2); margin-bottom: 1.5rem; }
+.form-group { margin-bottom: 1rem; }
+.form-label {
+  display: block; font-size: 13px; font-weight: 500;
+  color: var(--text2); margin-bottom: 5px;
+}
+.form-hint { font-size: 11px; color: var(--text3); margin-top: 4px; }
+.pw-wrap { position: relative; }
+.pw-wrap input { padding-right: 40px; }
+.pw-toggle {
+  position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; cursor: pointer; color: var(--text3);
+  font-size: 17px; padding: 2px; line-height: 1;
+}
+.pw-toggle:hover { color: var(--text2); }
+.error-box {
+  background: var(--danger-bg); border: 1px solid var(--danger-bd);
+  color: var(--danger); border-radius: var(--radius);
+  padding: 9px 12px; font-size: 13px; margin-bottom: 1rem;
+  display: none; align-items: center; gap: 8px;
+}
+.error-box.show { display: flex; }
+.info-box {
+  background: var(--accent-bg); border: 1px solid var(--accent-bd);
+  color: var(--accent-tx); border-radius: var(--radius);
+  padding: 9px 12px; font-size: 13px; margin-bottom: 1rem;
+  display: none; align-items: center; gap: 8px;
+}
+.info-box.show { display: flex; }
+.divider { border: none; border-top: 1px solid var(--border); margin: 1.25rem 0; }
+.link-btn {
+  background: none; border: none; cursor: pointer;
+  color: var(--accent); font-size: 13px;
+}
+.link-btn:hover { text-decoration: underline; }
+
+/* ── Buttons ─────────────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 7px; padding: 9px 18px; border-radius: var(--radius);
+  font-size: 14px; font-weight: 500; cursor: pointer;
+  border: 1px solid transparent; transition: opacity .15s, background .15s;
+}
+.btn:disabled { opacity: .55; cursor: not-allowed; }
+.btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn-primary:hover:not(:disabled) { opacity: .88; }
+.btn-secondary { background: var(--surface); color: var(--text); border-color: var(--border2); }
+.btn-secondary:hover:not(:disabled) { background: var(--surface2); }
+.btn-danger { background: none; color: var(--danger); border-color: var(--danger-bd); }
+.btn-danger:hover:not(:disabled) { background: var(--danger-bg); }
+.btn-icon {
+  width: 32px; height: 32px; padding: 0;
+  background: none; border: none; cursor: pointer;
+  border-radius: 6px; color: var(--text3); font-size: 17px;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.btn-icon:hover { background: var(--surface2); color: var(--text); }
+.btn-full { width: 100%; }
+
+/* ── Topbar ──────────────────────────────────────────── */
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 12px 18px; margin-bottom: 1.5rem;
+  box-shadow: var(--shadow);
+}
+.topbar-brand { display: flex; align-items: center; gap: 10px; }
+.topbar-icon {
+  width: 34px; height: 34px; border-radius: 9px;
+  background: var(--accent-bg); color: var(--accent);
+  display: flex; align-items: center; justify-content: center; font-size: 17px;
+}
+.topbar-name { font-weight: 600; font-size: 15px; }
+.topbar-email { font-size: 12px; color: var(--text3); }
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+.sync-badge {
+  font-size: 12px; font-weight: 500; display: flex; align-items: center; gap: 5px;
+}
+.sync-badge.synced { color: var(--success); }
+.sync-badge.saving { color: var(--warn); }
+.sync-badge.error  { color: var(--danger); }
+
+/* ── Controls ────────────────────────────────────────── */
+.controls { display: flex; gap: 10px; margin-bottom: 1rem; flex-wrap: wrap; }
+.search-wrap { flex: 1; min-width: 200px; position: relative; }
+.search-wrap input { padding-left: 36px; }
+.search-icon {
+  position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
+  color: var(--text3); font-size: 17px; pointer-events: none;
+}
+.cat-bar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1.25rem; }
+.cat-chip {
+  padding: 5px 14px; border-radius: 20px;
+  border: 1px solid var(--border); background: none;
+  cursor: pointer; font-size: 13px; color: var(--text2);
+  transition: all .12s;
+}
+.cat-chip:hover { border-color: var(--border2); background: var(--surface2); }
+.cat-chip.active {
+  background: var(--accent-bg); border-color: var(--accent-bd);
+  color: var(--accent-tx); font-weight: 500;
+}
+
+/* ── Entry Cards ─────────────────────────────────────── */
+.entries-list { display: flex; flex-direction: column; gap: 8px; }
+.entry-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 13px 16px;
+  display: flex; align-items: center; gap: 14px;
+  cursor: pointer; transition: border-color .15s, box-shadow .15s;
+  box-shadow: var(--shadow);
+}
+.entry-card:hover { border-color: var(--border2); box-shadow: var(--shadow-md); }
+.entry-avatar {
+  width: 42px; height: 42px; border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+}
+.entry-body { flex: 1; min-width: 0; }
+.entry-name { font-weight: 500; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.entry-meta-row { display: flex; align-items: center; gap: 6px; margin-top: 3px; flex-wrap: wrap; }
+.entry-user { font-size: 12px; color: var(--text2); }
+.entry-url  { font-size: 12px; color: var(--accent); }
+.entry-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.cat-pill {
+  font-size: 11px; font-weight: 500;
+  padding: 3px 9px; border-radius: 20px;
+}
+.strength-dot { width: 9px; height: 9px; border-radius: 50%; }
+.sd-weak   { background: #ef4444; }
+.sd-fair   { background: #f59e0b; }
+.sd-good   { background: #22c55e; }
+.sd-strong { background: #10b981; }
+.sf-weak   { background: #ef4444; }
+.sf-fair   { background: #f59e0b; }
+.sf-good   { background: #22c55e; }
+.sf-strong { background: #10b981; }
+
+/* ── Empty State ─────────────────────────────────────── */
+.empty-state {
+  text-align: center; padding: 4rem 1rem; color: var(--text3);
+}
+.empty-state i { font-size: 48px; margin-bottom: 1rem; display: block; }
+.empty-state h3 { font-size: 16px; font-weight: 500; color: var(--text2); margin-bottom: .5rem; }
+.empty-state p { font-size: 13px; }
+
+/* ── Modal ───────────────────────────────────────────── */
+.modal-backdrop {
+  position: fixed; inset: 0; background: rgba(0,0,0,.45);
+  z-index: 100; display: flex; align-items: center; justify-content: center;
+  padding: 1rem;
+}
+.modal-backdrop.hidden { display: none; }
+.modal {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; padding: 1.75rem; width: 100%; max-width: 500px;
+  max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-md);
+}
+.modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+.modal-title { font-size: 17px; font-weight: 600; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.modal-footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border); }
+
+/* ── Password field with actions ─────────────────────── */
+.pw-field-wrap { position: relative; }
+.pw-field-wrap input { padding-right: 76px; }
+.pw-field-actions { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); display: flex; gap: 2px; }
+
+/* ── Strength ────────────────────────────────────────── */
+.strength-track { height: 4px; background: var(--border); border-radius: 2px; margin-top: 7px; overflow: hidden; }
+.strength-bar { height: 100%; border-radius: 2px; transition: width .3s, background .3s; }
+.strength-text { font-size: 12px; margin-top: 5px; font-weight: 500; }
+
+/* ── Generator options ───────────────────────────────── */
+.gen-panel {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 12px 14px; margin-top: 8px;
+}
+.gen-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.gen-row:last-child { margin-bottom: 0; }
+.gen-checks { display: flex; gap: 14px; flex-wrap: wrap; }
+.gen-check { display: flex; align-items: center; gap: 5px; font-size: 13px; color: var(--text2); cursor: pointer; }
+.gen-check input { cursor: pointer; width: auto; }
+.len-display { font-weight: 600; min-width: 26px; text-align: right; font-size: 14px; }
+input[type=range] {
+  width: 130px; height: 4px; cursor: pointer;
+  accent-color: var(--accent);
+}
+
+/* ── Toast ───────────────────────────────────────────── */
+#toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 10px 18px; font-size: 13px; font-weight: 500;
+  display: flex; align-items: center; gap: 8px;
+  box-shadow: var(--shadow-md); z-index: 9999;
+  transition: opacity .3s, transform .3s;
+  white-space: nowrap;
+}
+#toast.hidden { opacity: 0; pointer-events: none; transform: translate(-50%, 10px); }
+#toast.success { border-color: var(--success-bd); color: var(--success); }
+#toast.error   { border-color: var(--danger-bd);  color: var(--danger); }
+#toast.info    { border-color: var(--accent-bd);  color: var(--accent-tx); }
+
+/* ── Stats bar ───────────────────────────────────────── */
+.stats-bar {
+  display: flex; gap: 16px; margin-bottom: 1.25rem; flex-wrap: wrap;
+}
+.stat-card {
+  flex: 1; min-width: 100px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 10px;
+  padding: 10px 14px; box-shadow: var(--shadow);
+}
+.stat-label { font-size: 11px; color: var(--text3); font-weight: 500; text-transform: uppercase; letter-spacing: .04em; }
+.stat-value { font-size: 20px; font-weight: 600; margin-top: 2px; }
+
+/* ── Category colors ─────────────────────────────────── */
+.cat-social   { background: #ede9fe; color: #4c1d95; }
+.cat-banking  { background: #fef9c3; color: #78350f; }
+.cat-work     { background: #dcfce7; color: #14532d; }
+.cat-email    { background: #fee2e2; color: #7f1d1d; }
+.cat-shopping { background: #f3e8ff; color: #581c87; }
+.cat-other    { background: #f1f5f9; color: #1e293b; }
+
+@media (prefers-color-scheme: dark) {
+  .cat-social   { background: #2e1065; color: #c4b5fd; }
+  .cat-banking  { background: #1c1400; color: #fde68a; }
+  .cat-work     { background: #052e16; color: #86efac; }
+  .cat-email    { background: #2d0a0a; color: #fca5a5; }
+  .cat-shopping { background: #1a0533; color: #d8b4fe; }
+  .cat-other    { background: #1e293b; color: #94a3b8; }
+}
+.av-social   { background: #ede9fe; }
+.av-banking  { background: #fef9c3; }
+.av-work     { background: #dcfce7; }
+.av-email    { background: #fee2e2; }
+.av-shopping { background: #f3e8ff; }
+.av-other    { background: #f1f5f9; }
+
+@media (max-width: 520px) {
+  .form-row { grid-template-columns: 1fr; }
+  .entry-right .cat-pill { display: none; }
+  .stats-bar { gap: 8px; }
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- Loading -->
+  <div id="loading-screen" class="screen active">
+    <div class="spinner"></div>
+    <span style="font-size:14px;color:var(--text2)">Connecting to Firebase…</span>
+  </div>
+
+  <!-- Auth Screen -->
+  <div id="auth-screen" class="screen">
+    <div class="auth-card">
+      <div class="brand">
+        <div class="brand-icon"><i class="ti ti-shield-lock"></i></div>
+        <div>
+          <div class="brand-name">SecureVault</div>
+          <div class="brand-tagline">End-to-end encrypted password manager</div>
+        </div>
+      </div>
+
+      <div class="auth-title" id="auth-title">Sign in</div>
+      <div class="auth-sub" id="auth-sub">Passwords are encrypted on your device before syncing</div>
+
+      <div class="error-box" id="auth-error"><i class="ti ti-alert-circle"></i><span id="auth-error-text"></span></div>
+      <div class="info-box"  id="auth-info"><i class="ti ti-info-circle"></i><span id="auth-info-text"></span></div>
+
+      <div id="signup-name-field" style="display:none">
+        <div class="form-group">
+          <label class="form-label">Display name</label>
+          <input type="text" id="auth-name" placeholder="Your name" autocomplete="name" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Email address</label>
+        <input type="email" id="auth-email" placeholder="you@email.com" autocomplete="email" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Account password</label>
+        <div class="pw-wrap">
+          <input type="password" id="auth-pw" placeholder="Account password" autocomplete="current-password" />
+          <button class="pw-toggle" onclick="toggleField('auth-pw',this)" type="button"><i class="ti ti-eye"></i></button>
+        </div>
+      </div>
+
+      <div id="auth-signup-extra" style="display:none">
+        <div class="form-group">
+          <label class="form-label">Confirm account password</label>
+          <div class="pw-wrap">
+            <input type="password" id="auth-pw2" placeholder="Confirm password" autocomplete="new-password" />
+            <button class="pw-toggle" onclick="toggleField('auth-pw2',this)" type="button"><i class="ti ti-eye"></i></button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">
+            Vault master key <span style="color:var(--danger)">*</span>
+          </label>
+          <div class="pw-wrap">
+            <input type="password" id="vault-master-new" placeholder="Separate key to encrypt vault" autocomplete="new-password" />
+            <button class="pw-toggle" onclick="toggleField('vault-master-new',this)" type="button"><i class="ti ti-eye"></i></button>
+          </div>
+          <div class="form-hint">
+            <i class="ti ti-alert-triangle" style="font-size:12px;color:var(--warn)"></i>
+            This key encrypts all your passwords — never stored anywhere.
+            <strong>Write it down. If lost, vault cannot be decrypted.</strong>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-full" id="auth-btn" style="margin-top:.5rem">
+        <i class="ti ti-login"></i><span id="auth-btn-text">Sign in</span>
+      </button>
+
+      <hr class="divider" />
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+        <button class="link-btn" id="toggle-mode-btn">Don't have an account? Sign up</button>
+        <button class="link-btn" id="forgot-btn" style="color:var(--text2)">Forgot password?</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Master Key Screen -->
+  <div id="master-screen" class="screen">
+    <div class="auth-card">
+      <div class="brand">
+        <div class="brand-icon"><i class="ti ti-key"></i></div>
+        <div>
+          <div class="brand-name">Unlock Vault</div>
+          <div class="brand-tagline" id="master-email-display">Enter your master key</div>
+        </div>
+      </div>
+
+      <div class="auth-title">Enter vault master key</div>
+      <div class="auth-sub">This key decrypts your passwords locally — never sent to any server</div>
+
+      <div class="error-box" id="master-error"><i class="ti ti-alert-circle"></i><span id="master-error-text"></span></div>
+
+      <div class="form-group">
+        <label class="form-label">Vault master key</label>
+        <div class="pw-wrap">
+          <input type="password" id="master-key-input" placeholder="Your vault master key" autocomplete="current-password" />
+          <button class="pw-toggle" onclick="toggleField('master-key-input',this)" type="button"><i class="ti ti-eye"></i></button>
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-full" id="master-btn" style="margin-top:.5rem">
+        <i class="ti ti-lock-open"></i><span>Unlock vault</span>
+      </button>
+
+      <div style="text-align:center;margin-top:1rem">
+        <button class="link-btn" id="master-signout-btn" style="color:var(--text2)">
+          <i class="ti ti-logout" style="font-size:13px"></i> Sign out
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main App -->
+  <div id="main-screen" class="screen">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="topbar-brand">
+        <div class="topbar-icon"><i class="ti ti-shield-lock"></i></div>
+        <div>
+          <div class="topbar-name">SecureVault</div>
+          <div class="topbar-email" id="topbar-email"></div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="sync-badge synced" id="sync-badge"><i class="ti ti-cloud-check"></i><span>Synced</span></div>
+        <button class="btn btn-secondary" id="sign-out-btn" style="padding:7px 14px;font-size:13px">
+          <i class="ti ti-logout"></i> Sign out
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-bar" id="stats-bar"></div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <div class="search-wrap">
+        <i class="ti ti-search search-icon"></i>
+        <input type="text" id="search-input" placeholder="Search by name, username, or URL…" />
+      </div>
+      <button class="btn btn-primary" id="add-btn">
+        <i class="ti ti-plus"></i> Add entry
+      </button>
+    </div>
+
+    <div class="cat-bar" id="cat-bar"></div>
+    <div class="entries-list" id="entries-list"></div>
+  </div>
+
+  <!-- Entry Modal -->
+  <div id="modal-backdrop" class="modal-backdrop hidden">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-header">
+        <span class="modal-title" id="modal-title">Add entry</span>
+        <button class="btn-icon" id="close-modal-btn" title="Close"><i class="ti ti-x"></i></button>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Name / site <span style="color:var(--danger)">*</span></label>
+          <input type="text" id="f-name" placeholder="e.g. GitHub" autocomplete="off" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select id="f-cat">
+            <option value="Social">Social</option>
+            <option value="Banking">Banking</option>
+            <option value="Work">Work</option>
+            <option value="Email">Email</option>
+            <option value="Shopping">Shopping</option>
+            <option value="Other" selected>Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Username / email</label>
+          <input type="text" id="f-user" placeholder="your@email.com" autocomplete="off" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">URL (optional)</label>
+          <input type="text" id="f-url" placeholder="https://…" autocomplete="off" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Password <span style="color:var(--danger)">*</span></label>
+        <div class="pw-field-wrap">
+          <input type="password" id="f-pw" placeholder="Enter or generate a password" autocomplete="new-password"
+            oninput="updateStrength(this.value)" />
+          <div class="pw-field-actions">
+            <button class="btn-icon" id="f-pw-toggle" title="Show/hide" onclick="toggleField('f-pw', document.getElementById('f-pw-toggle'))" type="button"><i class="ti ti-eye"></i></button>
+            <button class="btn-icon" title="Generate password" onclick="generatePw()" type="button"><i class="ti ti-refresh"></i></button>
+          </div>
+        </div>
+        <div class="strength-track"><div class="strength-bar" id="strength-bar" style="width:0%"></div></div>
+        <div class="strength-text" id="strength-text" style="color:var(--text3)">—</div>
+      </div>
+
+      <!-- Generator panel -->
+      <div class="gen-panel">
+        <div class="gen-row">
+          <span style="font-size:13px;color:var(--text2);font-weight:500">Password length</span>
+          <div style="display:flex;align-items:center;gap:10px">
+            <input type="range" id="pw-len" min="8" max="64" value="20" step="1"
+              oninput="document.getElementById('pw-len-val').textContent=this.value" />
+            <span class="len-display" id="pw-len-val">20</span>
+          </div>
+        </div>
+        <div class="gen-checks">
+          <label class="gen-check"><input type="checkbox" id="inc-upper" checked /> Uppercase</label>
+          <label class="gen-check"><input type="checkbox" id="inc-lower" checked /> Lowercase</label>
+          <label class="gen-check"><input type="checkbox" id="inc-num"   checked /> Numbers</label>
+          <label class="gen-check"><input type="checkbox" id="inc-sym"   checked /> Symbols</label>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-top:1rem">
+        <label class="form-label">Notes (optional)</label>
+        <textarea id="f-note" rows="3" placeholder="Security questions, backup codes, extra info…"></textarea>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-danger" id="delete-btn" style="display:none;margin-right:auto" onclick="deleteEntry()">
+          <i class="ti ti-trash"></i> Delete
+        </button>
+        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" id="save-btn" onclick="saveEntry()">
+          <i class="ti ti-device-floppy"></i> <span id="save-btn-text">Save entry</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- #app -->
+
+<!-- Toast -->
+<div id="toast" class="hidden"></div>
+
+<!-- ═══════════════════════════════════════════════════════
+     Firebase SDK (v10 ESM)
+     ═══════════════════════════════════════════════════════ -->
+<script type="module">
+
+// ─── Firebase imports ───────────────────────────────────
+import { initializeApp }
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import {
+  getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+  signOut, onAuthStateChanged, sendPasswordResetEmail
+} from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import {
+  getFirestore, doc, getDoc, setDoc, serverTimestamp
+} from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+// ─── Firebase config ────────────────────────────────────
+const FIREBASE_CONFIG = {
+  apiKey:            "AIzaSyDmgMUucaRBDRWibQ-K9LWBi0oRgvuSnzM",
+  authDomain:        "vault-e2da5.firebaseapp.com",
+  projectId:         "vault-e2da5",
+  storageBucket:     "vault-e2da5.firebasestorage.app",
+  messagingSenderId: "647743099099",
+  appId:             "1:647743099099:web:b71a4de2bc92d09283bcfe"
+};
+
+const fbApp = initializeApp(FIREBASE_CONFIG);
+const auth  = getAuth(fbApp);
+const db    = getFirestore(fbApp);
+
+// ─── State ──────────────────────────────────────────────
+let cryptoKey    = null;
+let entries      = [];
+let editingId    = null;
+let activeFilter = 'All';
+let isSignup     = false;
+let currentUser  = null;
+let pwFieldVisible = false;
+
+const CAT = {
+  Social:   { emoji: '👥', cls: 'cat-social',   av: 'av-social'   },
+  Banking:  { emoji: '🏦', cls: 'cat-banking',  av: 'av-banking'  },
+  Work:     { emoji: '💼', cls: 'cat-work',     av: 'av-work'     },
+  Email:    { emoji: '✉️', cls: 'cat-email',    av: 'av-email'    },
+  Shopping: { emoji: '🛍️', cls: 'cat-shopping', av: 'av-shopping' },
+  Other:    { emoji: '🔑', cls: 'cat-other',    av: 'av-other'    },
+};
+
+// ─── Helpers ────────────────────────────────────────────
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function esc(s) {
+  const d = document.createElement('div');
+  d.textContent = s || '';
+  return d.innerHTML;
+}
+
+let toastTimer;
+window.showToast = function(msg, type = 'success') {
+  clearTimeout(toastTimer);
+  const t = document.getElementById('toast');
+  const icon = { success: 'ti-check', error: 'ti-x', info: 'ti-info-circle' }[type] || 'ti-check';
+  t.innerHTML = `<i class="ti ${icon}"></i> ${esc(msg)}`;
+  t.className = type;
+  toastTimer = setTimeout(() => t.className = 'hidden', 3000);
+};
+
+function setSyncBadge(state) {
+  const el = document.getElementById('sync-badge');
+  const map = {
+    synced: { icon: 'ti-cloud-check',  text: 'Synced',  cls: 'synced' },
+    saving: { icon: 'ti-cloud-upload', text: 'Saving…', cls: 'saving' },
+    error:  { icon: 'ti-cloud-off',    text: 'Error',   cls: 'error'  },
+  };
+  const m = map[state] || map.synced;
+  el.className = `sync-badge ${m.cls}`;
+  el.innerHTML = `<i class="ti ${m.icon}"></i><span>${m.text}</span>`;
+}
+
+// ─── Crypto ─────────────────────────────────────────────
+async function deriveKey(masterPw, uid) {
+  const enc  = new TextEncoder();
+  const salt = enc.encode(uid + '_securevault_v2');
+  const km   = await crypto.subtle.importKey(
+    'raw', enc.encode(masterPw), { name: 'PBKDF2' }, false, ['deriveKey']
+  );
+  return crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt, iterations: 150000, hash: 'SHA-256' },
+    km,
+    { name: 'AES-GCM', length: 256 },
+    false,
+    ['encrypt', 'decrypt']
+  );
+}
+
+async function encrypt(data, key) {
+  const iv  = crypto.getRandomValues(new Uint8Array(12));
+  const enc = new TextEncoder();
+  const ct  = await crypto.subtle.encrypt(
+    { name: 'AES-GCM', iv }, key, enc.encode(JSON.stringify(data))
+  );
+  return { iv: Array.from(iv), ct: Array.from(new Uint8Array(ct)) };
+}
+
+async function decrypt(payload, key) {
+  const iv  = new Uint8Array(payload.iv);
+  const ct  = new Uint8Array(payload.ct);
+  const pt  = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, ct);
+  return JSON.parse(new TextDecoder().decode(pt));
+}
+
+// ─── Firebase vault ops ──────────────────────────────────
+async function saveVault() {
+  if (!cryptoKey || !currentUser) return;
+  setSyncBadge('saving');
+  try {
+    const payload = await encrypt(entries, cryptoKey);
+    await setDoc(doc(db, 'vaults', currentUser.uid), {
+      payload:   JSON.stringify(payload),
+      updatedAt: serverTimestamp(),
+      count:     entries.length,
+    });
+    setSyncBadge('synced');
+  } catch (e) {
+    setSyncBadge('error');
+    showToast('Sync failed — check your connection', 'error');
+  }
+}
+
+async function loadVault() {
+  if (!cryptoKey || !currentUser) return false;
+  try {
+    const snap = await getDoc(doc(db, 'vaults', currentUser.uid));
+    if (snap.exists() && snap.data().payload) {
+      entries = await decrypt(JSON.parse(snap.data().payload), cryptoKey);
+    } else {
+      entries = [];
+    }
+    return true;
+  } catch (e) {
+    showToast('Wrong master key — cannot decrypt vault', 'error');
+    cryptoKey = null;
+    return false;
+  }
+}
+
+// ─── Auth flow ───────────────────────────────────────────
+onAuthStateChanged(auth, async user => {
+  document.getElementById('loading-screen').classList.remove('active');
+  if (user) {
+    currentUser = user;
+    document.getElementById('master-email-display').textContent = user.email;
+    show('master-screen');
+    document.getElementById('master-key-input').focus();
+  } else {
+    currentUser = null; cryptoKey = null; entries = [];
+    show('auth-screen');
+    document.getElementById('auth-email').focus();
+  }
+});
+
+// Auth button
+document.getElementById('auth-btn').addEventListener('click', async () => {
+  const email   = document.getElementById('auth-email').value.trim();
+  const pw      = document.getElementById('auth-pw').value;
+  const errEl   = document.getElementById('auth-error');
+  const errText = document.getElementById('auth-error-text');
+  const infoEl  = document.getElementById('auth-info');
+  errEl.classList.remove('show');
+  infoEl.classList.remove('show');
+
+  if (!email || !pw) {
+    errText.textContent = 'Email and password are required';
+    errEl.classList.add('show'); return;
+  }
+
+  const btn     = document.getElementById('auth-btn');
+  const btnText = document.getElementById('auth-btn-text');
+  btn.disabled  = true;
+  btnText.textContent = isSignup ? 'Creating account…' : 'Signing in…';
+
+  const ERR_MAP = {
+    'auth/user-not-found':      'No account found with that email',
+    'auth/wrong-password':      'Incorrect password',
+    'auth/invalid-credential':  'Incorrect email or password',
+    'auth/email-already-in-use':'That email is already registered',
+    'auth/weak-password':       'Password must be at least 6 characters',
+    'auth/invalid-email':       'Invalid email address',
+    'auth/too-many-requests':   'Too many attempts — please wait and try again',
+    'auth/network-request-failed': 'Network error — check your internet connection',
+  };
+
+  try {
+    if (isSignup) {
+      const pw2 = document.getElementById('auth-pw2').value;
+      const mk  = document.getElementById('vault-master-new').value;
+      if (pw !== pw2) {
+        errText.textContent = 'Account passwords do not match';
+        errEl.classList.add('show'); btn.disabled = false; btnText.textContent = 'Sign up'; return;
+      }
+      if (!mk || mk.length < 8) {
+        errText.textContent = 'Master key must be at least 8 characters';
+        errEl.classList.add('show'); btn.disabled = false; btnText.textContent = 'Sign up'; return;
+      }
+      const cred = await createUserWithEmailAndPassword(auth, email, pw);
+      currentUser = cred.user;
+      cryptoKey   = await deriveKey(mk, cred.user.uid);
+      entries     = [];
+      await saveVault();
+      document.getElementById('auth-pw').value = '';
+      document.getElementById('vault-master-new').value = '';
+      document.getElementById('topbar-email').textContent = cred.user.email;
+      show('main-screen');
+      renderAll();
+      showToast('Vault created — welcome!');
+    } else {
+      await signInWithEmailAndPassword(auth, email, pw);
+      // onAuthStateChanged handles the rest
+    }
+  } catch (e) {
+    errText.textContent = ERR_MAP[e.code] || e.message;
+    errEl.classList.add('show');
+  }
+
+  btn.disabled = false;
+  btnText.textContent = isSignup ? 'Sign up' : 'Sign in';
+});
+
+// Toggle sign in / sign up mode
+document.getElementById('toggle-mode-btn').addEventListener('click', () => {
+  isSignup = !isSignup;
+  document.getElementById('auth-title').textContent      = isSignup ? 'Create account' : 'Sign in';
+  document.getElementById('auth-sub').textContent        = isSignup
+    ? 'Choose a strong master key to encrypt your vault'
+    : 'Passwords are encrypted on your device before syncing';
+  document.getElementById('auth-btn-text').textContent   = isSignup ? 'Sign up' : 'Sign in';
+  document.getElementById('toggle-mode-btn').textContent = isSignup ? 'Already have an account? Sign in' : "Don't have an account? Sign up";
+  document.getElementById('signup-name-field').style.display  = isSignup ? 'block' : 'none';
+  document.getElementById('auth-signup-extra').style.display  = isSignup ? 'block' : 'none';
+  document.getElementById('forgot-btn').style.display         = isSignup ? 'none'  : '';
+  document.getElementById('auth-error').classList.remove('show');
+  document.getElementById('auth-info').classList.remove('show');
+});
+
+// Forgot password
+document.getElementById('forgot-btn').addEventListener('click', async () => {
+  const email = document.getElementById('auth-email').value.trim();
+  if (!email) {
+    document.getElementById('auth-error-text').textContent = 'Enter your email address first';
+    document.getElementById('auth-error').classList.add('show'); return;
+  }
+  try {
+    await sendPasswordResetEmail(auth, email);
+    document.getElementById('auth-info-text').textContent = `Reset link sent to ${email}`;
+    document.getElementById('auth-info').classList.add('show');
+    document.getElementById('auth-error').classList.remove('show');
+  } catch (e) {
+    document.getElementById('auth-error-text').textContent = 'Could not send reset email — check the address';
+    document.getElementById('auth-error').classList.add('show');
+  }
+});
+
+// Enter key on auth fields
+['auth-email','auth-pw','auth-pw2','vault-master-new'].forEach(id => {
+  document.getElementById(id)?.addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('auth-btn').click();
+  });
+});
+
+// Master key unlock
+document.getElementById('master-btn').addEventListener('click', async () => {
+  const key    = document.getElementById('master-key-input').value;
+  const errEl  = document.getElementById('master-error');
+  const errTxt = document.getElementById('master-error-text');
+  errEl.classList.remove('show');
+
+  if (!key) {
+    errTxt.textContent = 'Enter your vault master key';
+    errEl.classList.add('show'); return;
+  }
+
+  const btn = document.getElementById('master-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="ti ti-loader"></i> <span>Unlocking…</span>';
+
+  try {
+    cryptoKey = await deriveKey(key, currentUser.uid);
+    const ok  = await loadVault();
+    if (ok) {
+      document.getElementById('master-key-input').value = '';
+      document.getElementById('topbar-email').textContent = currentUser.email;
+      show('main-screen');
+      renderAll();
+      showToast('Vault unlocked');
+    } else {
+      errTxt.textContent = 'Wrong master key — vault cannot be decrypted';
+      errEl.classList.add('show');
+      cryptoKey = null;
+    }
+  } catch (e) {
+    errTxt.textContent = 'Error unlocking vault';
+    errEl.classList.add('show');
+    cryptoKey = null;
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '<i class="ti ti-lock-open"></i> <span>Unlock vault</span>';
+});
+
+document.getElementById('master-key-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('master-btn').click();
+});
+
+document.getElementById('master-signout-btn').addEventListener('click', () => signOut(auth));
+
+// Sign out
+document.getElementById('sign-out-btn').addEventListener('click', async () => {
+  cryptoKey = null; entries = [];
+  await signOut(auth);
+  showToast('Signed out', 'info');
+});
+
+// ─── Password utils ──────────────────────────────────────
+window.toggleField = function(inputId, btn) {
+  const inp = document.getElementById(inputId);
+  const isText = inp.type === 'text';
+  inp.type = isText ? 'password' : 'text';
+  btn.innerHTML = isText ? '<i class="ti ti-eye"></i>' : '<i class="ti ti-eye-off"></i>';
+};
+
+window.generatePw = function() {
+  const len  = parseInt(document.getElementById('pw-len').value);
+  let chars  = '';
+  if (document.getElementById('inc-upper').checked) chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  if (document.getElementById('inc-lower').checked) chars += 'abcdefghijklmnopqrstuvwxyz';
+  if (document.getElementById('inc-num').checked)   chars += '0123456789';
+  if (document.getElementById('inc-sym').checked)   chars += '!@#$%^&*()-_=+[]{}|;:,.<>?';
+  if (!chars) { showToast('Select at least one character type', 'error'); return; }
+  const arr = new Uint32Array(len);
+  crypto.getRandomValues(arr);
+  const pw = Array.from(arr).map(n => chars[n % chars.length]).join('');
+  const inp = document.getElementById('f-pw');
+  inp.value = pw; inp.type = 'text';
+  document.getElementById('f-pw-toggle').innerHTML = '<i class="ti ti-eye-off"></i>';
+  updateStrength(pw);
+};
+
+window.updateStrength = function(pw) {
+  const bar = document.getElementById('strength-bar');
+  const txt = document.getElementById('strength-text');
+  if (!pw) { bar.style.width = '0%'; txt.textContent = '—'; txt.style.color = 'var(--text3)'; return; }
+  let s = 0;
+  if (pw.length >= 8)  s++;
+  if (pw.length >= 14) s++;
+  if (pw.length >= 20) s++;
+  if (/[A-Z]/.test(pw)) s++;
+  if (/[a-z]/.test(pw)) s++;
+  if (/[0-9]/.test(pw)) s++;
+  if (/[^A-Za-z0-9]/.test(pw)) s++;
+  const level = s <= 2 ? 0 : s <= 4 ? 1 : s <= 5 ? 2 : 3;
+  const MAP = [
+    { w: '25%', bg: '#ef4444', label: 'Weak',   color: '#ef4444' },
+    { w: '50%', bg: '#f59e0b', label: 'Fair',   color: '#d97706' },
+    { w: '75%', bg: '#22c55e', label: 'Good',   color: '#16a34a' },
+    { w: '100%',bg: '#10b981', label: 'Strong', color: '#059669' },
+  ];
+  const m = MAP[level];
+  bar.style.width      = m.w;
+  bar.style.background = m.bg;
+  txt.textContent      = m.label;
+  txt.style.color      = m.color;
+};
+
+// ─── Entry modal ─────────────────────────────────────────
+function openAddModal() {
+  editingId = null;
+  document.getElementById('modal-title').textContent   = 'Add entry';
+  document.getElementById('save-btn-text').textContent = 'Save entry';
+  document.getElementById('delete-btn').style.display  = 'none';
+  ['f-name','f-user','f-url','f-pw','f-note'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-cat').value = 'Other';
+  document.getElementById('f-pw').type   = 'password';
+  document.getElementById('f-pw-toggle').innerHTML = '<i class="ti ti-eye"></i>';
+  updateStrength('');
+  document.getElementById('modal-backdrop').classList.remove('hidden');
+  setTimeout(() => document.getElementById('f-name').focus(), 80);
+}
+
+function openEditModal(id) {
+  const e = entries.find(x => x.id === id);
+  if (!e) return;
+  editingId = id;
+  document.getElementById('modal-title').textContent   = 'Edit entry';
+  document.getElementById('save-btn-text').textContent = 'Update entry';
+  document.getElementById('delete-btn').style.display  = 'inline-flex';
+  document.getElementById('f-name').value = e.name;
+  document.getElementById('f-user').value = e.username || '';
+  document.getElementById('f-url').value  = e.url      || '';
+  document.getElementById('f-pw').value   = e.password;
+  document.getElementById('f-note').value = e.note     || '';
+  document.getElementById('f-cat').value  = e.category || 'Other';
+  document.getElementById('f-pw').type    = 'password';
+  document.getElementById('f-pw-toggle').innerHTML = '<i class="ti ti-eye"></i>';
+  updateStrength(e.password);
+  document.getElementById('modal-backdrop').classList.remove('hidden');
+}
+
+window.closeModal = function() {
+  document.getElementById('modal-backdrop').classList.add('hidden');
+  editingId = null;
+};
+
+window.saveEntry = async function() {
+  const name = document.getElementById('f-name').value.trim();
+  const pw   = document.getElementById('f-pw').value;
+  if (!name) { showToast('Name is required', 'error'); return; }
+  if (!pw)   { showToast('Password is required', 'error'); return; }
+
+  const btn = document.getElementById('save-btn');
+  btn.disabled = true;
+
+  const entry = {
+    id:       editingId || crypto.randomUUID(),
+    name,
+    username: document.getElementById('f-user').value.trim(),
+    url:      document.getElementById('f-url').value.trim(),
+    password: pw,
+    category: document.getElementById('f-cat').value,
+    note:     document.getElementById('f-note').value.trim(),
+    created:  editingId ? (entries.find(x => x.id === editingId) || {}).created || Date.now() : Date.now(),
+    updated:  Date.now(),
+  };
+
+  if (editingId) {
+    const i = entries.findIndex(x => x.id === editingId);
+    if (i > -1) entries[i] = entry;
+  } else {
+    entries.unshift(entry);
+  }
+
+  await saveVault();
+  closeModal();
+  renderAll();
+  showToast(editingId ? 'Entry updated' : 'Entry saved');
+  btn.disabled = false;
+};
+
+window.deleteEntry = async function() {
+  if (!editingId) return;
+  if (!confirm('Delete this entry? This cannot be undone.')) return;
+  entries = entries.filter(x => x.id !== editingId);
+  await saveVault();
+  closeModal();
+  renderAll();
+  showToast('Entry deleted');
+};
+
+window.copyPassword = async function(id, evt) {
+  evt.stopPropagation();
+  const e = entries.find(x => x.id === id);
+  if (!e) return;
+  try {
+    await navigator.clipboard.writeText(e.password);
+    showToast('Password copied — clears in 30s');
+    setTimeout(async () => {
+      try {
+        const t = await navigator.clipboard.readText();
+        if (t === e.password) await navigator.clipboard.writeText('');
+      } catch (_) {}
+    }, 30000);
+  } catch (err) {
+    showToast('Copy failed — allow clipboard access', 'error');
+  }
+};
+
+// ─── Render ───────────────────────────────────────────────
+function renderAll() {
+  renderStats();
+  renderCatBar();
+  renderEntries();
+}
+
+function renderStats() {
+  const total  = entries.length;
+  const cats   = [...new Set(entries.map(e => e.category))].length;
+  let weak = 0;
+  entries.forEach(e => {
+    let s = 0; const pw = e.password || '';
+    if (pw.length >= 8) s++; if (pw.length >= 14) s++;
+    if (/[A-Z]/.test(pw)) s++; if (/[a-z]/.test(pw)) s++;
+    if (/[0-9]/.test(pw)) s++; if (/[^A-Za-z0-9]/.test(pw)) s++;
+    if (s <= 2) weak++;
+  });
+  document.getElementById('stats-bar').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-label">Total entries</div>
+      <div class="stat-value">${total}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Categories</div>
+      <div class="stat-value">${cats}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Weak passwords</div>
+      <div class="stat-value" style="color:${weak > 0 ? 'var(--danger)' : 'var(--success)'}">${weak}</div>
+    </div>
+  `;
+}
+
+function renderCatBar() {
+  const cats = ['All', ...new Set(entries.map(e => e.category))];
+  if (!cats.includes(activeFilter)) activeFilter = 'All';
+  document.getElementById('cat-bar').innerHTML = cats.map(c =>
+    `<button class="cat-chip${c === activeFilter ? ' active' : ''}"
+      onclick="setFilter('${c}')">${c}</button>`
+  ).join('');
+}
+
+window.setFilter = function(cat) {
+  activeFilter = cat;
+  renderCatBar();
+  renderEntries();
+};
+
+function renderEntries() {
+  const search = document.getElementById('search-input').value.toLowerCase();
+  let filtered = entries.filter(e => {
+    const ms = !search || (e.name + e.username + (e.url || '')).toLowerCase().includes(search);
+    const mc = activeFilter === 'All' || e.category === activeFilter;
+    return ms && mc;
+  });
+
+  const list = document.getElementById('entries-list');
+  if (!filtered.length) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <i class="ti ti-shield-off"></i>
+        <h3>${entries.length ? 'No matching entries' : 'Vault is empty'}</h3>
+        <p>${entries.length ? 'Try a different search or category.' : 'Click "Add entry" to save your first password.'}</p>
+      </div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map(e => {
+    let s = 0; const pw = e.password || '';
+    if (pw.length >= 8) s++; if (pw.length >= 14) s++;
+    if (/[A-Z]/.test(pw)) s++; if (/[a-z]/.test(pw)) s++;
+    if (/[0-9]/.test(pw)) s++; if (/[^A-Za-z0-9]/.test(pw)) s++;
+    const sc  = s <= 2 ? 'weak' : s <= 4 ? 'fair' : s <= 5 ? 'good' : 'strong';
+    const cfg = CAT[e.category] || CAT.Other;
+    const url = e.url ? `<span class="entry-url">${esc(e.url.replace(/^https?:\/\//,''))}</span>` : '';
+    const sep = e.username && e.url ? '<span style="color:var(--text3)">·</span>' : '';
+    return `
+      <div class="entry-card" onclick="openEdit('${e.id}')">
+        <div class="entry-avatar ${cfg.av}">${cfg.emoji}</div>
+        <div class="entry-body">
+          <div class="entry-name">${esc(e.name)}</div>
+          <div class="entry-meta-row">
+            ${e.username ? `<span class="entry-user">${esc(e.username)}</span>` : ''}
+            ${sep}${url}
+          </div>
+        </div>
+        <div class="entry-right">
+          <span class="cat-pill ${cfg.cls}">${e.category}</span>
+          <span class="strength-dot sd-${sc}" title="${{weak:'Weak',fair:'Fair',good:'Good',strong:'Strong'}[sc]} password"></span>
+          <button class="btn-icon" title="Copy password" onclick="copyPassword('${e.id}', event)">
+            <i class="ti ti-copy"></i>
+          </button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+window.openEdit = openEditModal;
+
+// ─── Event wiring ────────────────────────────────────────
+document.getElementById('add-btn').addEventListener('click', openAddModal);
+document.getElementById('close-modal-btn').addEventListener('click', closeModal);
+document.getElementById('search-input').addEventListener('input', renderEntries);
+
+// Close modal on backdrop click
+document.getElementById('modal-backdrop').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal-backdrop')) closeModal();
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+  if ((e.ctrlKey || e.metaKey) && e.key === 'n' && document.getElementById('main-screen').classList.contains('active')) {
+    e.preventDefault(); openAddModal();
+  }
+});
+
+</script>
+</body>
+</html>
