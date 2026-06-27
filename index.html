@@ -2,771 +2,667 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<meta name="theme-color" content="#0d0f14"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <title>SecureVault Pro</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.0.0/tabler-icons.min.css"/>
 <style>
-/* ── Reset ── */
+/* ── Reset & Base ──────────────────────────────────── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0d0f14;
-  --surface:#13161f;
-  --surface2:#1a1d2e;
-  --surface3:#21253a;
-  --border:#2a2f47;
-  --border2:#363d5c;
-  --text:#e8eaf6;
-  --text2:#8b93b8;
-  --text3:#4a5178;
-  --accent:#6c63ff;
-  --accent2:#4f46e5;
-  --accent-bg:rgba(108,99,255,.12);
-  --accent-glow:rgba(108,99,255,.3);
-  --green:#22d3a6;
-  --green-bg:rgba(34,211,166,.1);
-  --red:#ff5c73;
-  --red-bg:rgba(255,92,115,.1);
-  --yellow:#fbbf24;
-  --yellow-bg:rgba(251,191,36,.1);
-  --radius:10px;
-  --radius-lg:16px;
-  --radius-xl:22px;
-  --shadow:0 2px 8px rgba(0,0,0,.4);
-  --shadow-lg:0 8px 32px rgba(0,0,0,.5);
-  --font:'Inter',system-ui,sans-serif;
-  --mono:'JetBrains Mono',monospace;
+  --bg:#0a0c12;--surface:#11141e;--surface2:#181c2e;--surface3:#1f2438;
+  --border:#252a40;--border2:#323859;
+  --text:#e8eaf6;--text2:#8b93b8;--text3:#4a5178;
+  --accent:#7c6fff;--accent2:#5b4de8;--accent-bg:rgba(124,111,255,.12);--accent-glow:rgba(124,111,255,.28);
+  --green:#1fd9a8;--green-bg:rgba(31,217,168,.10);
+  --red:#ff5572;--red-bg:rgba(255,85,114,.10);
+  --yellow:#f5b731;--yellow-bg:rgba(245,183,49,.10);
+  --r:10px;--rlg:16px;--rxl:22px;
+  --sh:0 2px 12px rgba(0,0,0,.45);--shlg:0 8px 40px rgba(0,0,0,.55);
+  --nav-h:64px;--top-h:60px;
+  --safe-b:env(safe-area-inset-bottom,0px);
+  --font:'Inter',system-ui,sans-serif;--mono:'JetBrains Mono',monospace;
 }
-body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
-input,select,textarea,button{font-family:inherit;font-size:14px}
+html{height:100%}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100%;font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased;overscroll-behavior:none}
+input,select,textarea,button{font-family:inherit;font-size:14px;-webkit-appearance:none;appearance:none}
 input[type=text],input[type=email],input[type=password],input[type=search],textarea,select{
-  width:100%;padding:10px 13px;border:1px solid var(--border2);border-radius:var(--radius);
-  background:var(--surface2);color:var(--text);outline:none;transition:border-color .15s,box-shadow .15s;
+  width:100%;padding:12px 14px;border:1.5px solid var(--border2);border-radius:var(--r);
+  background:var(--surface2);color:var(--text);outline:none;
+  transition:border-color .18s,box-shadow .18s,background .18s;
 }
-input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);background:var(--surface3)}
 input::placeholder,textarea::placeholder{color:var(--text3)}
 select option{background:var(--surface2)}
-textarea{resize:vertical;min-height:70px}
-a{color:var(--accent);text-decoration:none}
-a:hover{text-decoration:underline}
-
-/* ── Layout ── */
-#app{max-width:900px;margin:0 auto;padding:1.5rem 1rem 5rem}
-.screen{display:none}.screen.active{display:block}
-
-/* ── Scrollbar ── */
-::-webkit-scrollbar{width:6px;height:6px}
-::-webkit-scrollbar-track{background:var(--bg)}
+textarea{resize:vertical;min-height:72px}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
 
-/* ── Buttons ── */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:9px 18px;border-radius:var(--radius);font-size:14px;font-weight:500;cursor:pointer;border:1px solid transparent;transition:all .15s;white-space:nowrap}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
-.btn-primary:hover:not(:disabled){background:var(--accent2);box-shadow:0 0 20px var(--accent-glow)}
+/* ── Layout ──────────────────────────────────────── */
+#app{min-height:100vh;position:relative}
+.screen{display:none;min-height:100vh}.screen.active{display:flex;flex-direction:column}
+.page-wrap{flex:1;max-width:860px;margin:0 auto;width:100%;padding:0 1rem calc(var(--nav-h) + var(--safe-b) + 1rem);padding-top:0}
+
+/* ── Buttons ─────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px 18px;border-radius:var(--r);font-size:14px;font-weight:600;cursor:pointer;border:1.5px solid transparent;transition:all .18s;white-space:nowrap;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn:active:not(:disabled){transform:scale(.97)}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 0 0 0 var(--accent-glow)}
+.btn-primary:hover:not(:disabled){background:var(--accent2);box-shadow:0 0 22px var(--accent-glow)}
 .btn-ghost{background:transparent;color:var(--text2);border-color:var(--border2)}
 .btn-ghost:hover:not(:disabled){background:var(--surface2);color:var(--text)}
-.btn-danger{background:var(--red-bg);color:var(--red);border-color:rgba(255,92,115,.3)}
-.btn-danger:hover:not(:disabled){background:rgba(255,92,115,.2)}
-.btn-success{background:var(--green-bg);color:var(--green);border-color:rgba(34,211,166,.3)}
-.btn-icon{width:34px;height:34px;padding:0;background:transparent;border:none;cursor:pointer;border-radius:var(--radius);color:var(--text3);font-size:16px;display:inline-flex;align-items:center;justify-content:center;transition:all .12s}
-.btn-icon:hover{background:var(--surface3);color:var(--text)}
+.btn-danger{background:var(--red-bg);color:var(--red);border-color:rgba(255,85,114,.3)}
+.btn-danger:hover:not(:disabled){background:rgba(255,85,114,.2)}
 .btn-full{width:100%}
-.link-btn{background:none;border:none;cursor:pointer;color:var(--accent);font-size:13px;padding:0}
+.btn-icon{min-width:38px;height:38px;padding:0;background:transparent;border:none;cursor:pointer;border-radius:var(--r);color:var(--text3);font-size:17px;display:inline-flex;align-items:center;justify-content:center;transition:all .15s;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.btn-icon:hover{background:var(--surface3);color:var(--text)}
+.btn-icon:active{transform:scale(.9)}
+.link-btn{background:none;border:none;cursor:pointer;color:var(--accent);font-size:13px;padding:4px}
 .link-btn:hover{text-decoration:underline}
 
-/* ── Loading ── */
-#loading-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;gap:20px}
-.spinner{width:44px;height:44px;border:3px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+/* ── Loading ─────────────────────────────────────── */
+#loading-screen{align-items:center;justify-content:center;gap:20px}
+.spinner{width:46px;height:46px;border:3px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.loading-logo{font-size:28px;font-weight:700;letter-spacing:-.5px;background:linear-gradient(135deg,var(--accent),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.load-logo{font-size:26px;font-weight:700;letter-spacing:-.5px;background:linear-gradient(130deg,var(--accent),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 
-/* ── Auth ── */
-.auth-wrap{max-width:440px;margin:2.5rem auto 0}
-.auth-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);padding:2.25rem;box-shadow:var(--shadow-lg)}
-.auth-brand{text-align:center;margin-bottom:2rem}
-.auth-logo{width:64px;height:64px;border-radius:20px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 1rem;box-shadow:0 0 32px var(--accent-glow)}
-.auth-name{font-size:24px;font-weight:700;letter-spacing:-.4px;background:linear-gradient(135deg,#fff,var(--text2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.auth-tagline{font-size:13px;color:var(--text3);margin-top:4px}
-.auth-title{font-size:17px;font-weight:600;margin-bottom:.3rem}
-.auth-sub{font-size:13px;color:var(--text2);margin-bottom:1.5rem}
-.form-group{margin-bottom:1rem}
-.form-label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
-.form-hint{font-size:11px;color:var(--text3);margin-top:5px;line-height:1.5}
-.pw-wrap{position:relative}
-.pw-wrap input{padding-right:40px}
-.pw-eye{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px;padding:2px;line-height:1;transition:color .12s}
-.pw-eye:hover{color:var(--text2)}
-.alert{border-radius:var(--radius);padding:10px 13px;font-size:13px;margin-bottom:1rem;display:none;align-items:center;gap:9px;line-height:1.4}
+/* ── Auth ────────────────────────────────────────── */
+#auth-screen,#master-screen{align-items:center;justify-content:center;padding:1rem;min-height:100vh}
+.auth-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rxl);padding:2rem 1.75rem;width:100%;max-width:420px;box-shadow:var(--shlg);animation:fade-up .3s ease}
+@keyframes fade-up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.brand-block{text-align:center;margin-bottom:1.75rem}
+.brand-icon{width:68px;height:68px;border-radius:20px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 1rem;box-shadow:0 0 36px var(--accent-glow);animation:pulse-glow 3s ease-in-out infinite}
+@keyframes pulse-glow{0%,100%{box-shadow:0 0 20px var(--accent-glow)}50%{box-shadow:0 0 40px var(--accent-glow)}}
+.brand-name{font-size:22px;font-weight:700;letter-spacing:-.4px;background:linear-gradient(130deg,#fff 40%,var(--text2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.brand-tag{font-size:12px;color:var(--text3);margin-top:4px}
+.auth-title{font-size:17px;font-weight:700;margin-bottom:.3rem}
+.auth-sub{font-size:13px;color:var(--text2);margin-bottom:1.4rem;line-height:1.5}
+.fg{margin-bottom:.9rem}
+.fl{display:block;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em}
+.fh{font-size:11px;color:var(--text3);margin-top:5px;line-height:1.5}
+.pw-w{position:relative}.pw-w input{padding-right:44px}
+.pw-e{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text3);font-size:18px;padding:4px;line-height:1;transition:color .12s;touch-action:manipulation}
+.pw-e:hover{color:var(--text2)}
+.alert{border-radius:var(--r);padding:11px 13px;font-size:13px;margin-bottom:.9rem;display:none;align-items:flex-start;gap:9px;line-height:1.45;animation:slide-in .2s ease}
+@keyframes slide-in{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 .alert.show{display:flex}
-.alert-error{background:var(--red-bg);border:1px solid rgba(255,92,115,.3);color:var(--red)}
-.alert-info{background:var(--accent-bg);border:1px solid rgba(108,99,255,.3);color:#a5b4fc}
-.alert-success{background:var(--green-bg);border:1px solid rgba(34,211,166,.3);color:var(--green)}
-.alert-warn{background:var(--yellow-bg);border:1px solid rgba(251,191,36,.3);color:var(--yellow)}
-.divider{border:none;border-top:1px solid var(--border);margin:1.25rem 0}
-.divider-text{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--text3);margin:1.25rem 0}
-.divider-text::before,.divider-text::after{content:'';flex:1;border-top:1px solid var(--border)}
+.ae{background:var(--red-bg);border:1.5px solid rgba(255,85,114,.3);color:var(--red)}
+.ai{background:var(--accent-bg);border:1.5px solid rgba(124,111,255,.3);color:#a5b4fc}
+.as{background:var(--green-bg);border:1.5px solid rgba(31,217,168,.3);color:var(--green)}
+.aw{background:var(--yellow-bg);border:1.5px solid rgba(245,183,49,.3);color:var(--yellow)}
+.divt{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--text3);margin:1.1rem 0}
+.divt::before,.divt::after{content:'';flex:1;border-top:1px solid var(--border)}
+.bio-btn{width:100%;padding:13px;border-radius:var(--r);border:1.5px solid var(--border2);background:var(--surface2);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;font-size:14px;font-weight:500;color:var(--text2);transition:all .18s;touch-action:manipulation}
+.bio-btn:hover,.bio-btn:active{border-color:var(--accent);background:var(--accent-bg);color:var(--text);box-shadow:0 0 16px var(--accent-glow)}
+.bio-btn:disabled{opacity:.4;cursor:not-allowed}
+.bio-icon{font-size:24px;color:var(--accent)}
 
-/* ── Biometric button ── */
-.biometric-btn{
-  width:100%;padding:12px;border-radius:var(--radius);border:1px solid var(--border2);
-  background:var(--surface2);cursor:pointer;display:flex;align-items:center;justify-content:center;
-  gap:10px;font-size:14px;font-weight:500;color:var(--text2);transition:all .15s;
-}
-.biometric-btn:hover{border-color:var(--accent);background:var(--accent-bg);color:var(--text)}
-.biometric-btn:disabled{opacity:.4;cursor:not-allowed}
-.biometric-icon{font-size:22px;color:var(--accent)}
+/* ── Topbar ──────────────────────────────────────── */
+.topbar{display:flex;align-items:center;justify-content:space-between;background:var(--surface);border-bottom:1.5px solid var(--border);padding:10px 1rem;height:var(--top-h);position:sticky;top:0;z-index:40;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.topbar-brand{display:flex;align-items:center;gap:10px}
+.tb-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 0 14px var(--accent-glow);flex-shrink:0}
+.tb-name{font-size:15px;font-weight:700;letter-spacing:-.3px}
+.tb-email{font-size:11px;color:var(--text3)}
+.topbar-right{display:flex;align-items:center;gap:6px}
+.sync-pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:5px 10px;border-radius:20px;transition:all .3s}
+.sp-ok{background:var(--green-bg);color:var(--green)}
+.sp-save{background:var(--yellow-bg);color:var(--yellow)}
+.sp-err{background:var(--red-bg);color:var(--red)}
 
-/* ── Topbar ── */
-.topbar{display:flex;align-items:center;justify-content:space-between;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:12px 18px;margin-bottom:1.5rem;box-shadow:var(--shadow)}
-.topbar-brand{display:flex;align-items:center;gap:11px}
-.topbar-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 0 14px var(--accent-glow)}
-.topbar-name{font-size:15px;font-weight:700;letter-spacing:-.3px}
-.topbar-email{font-size:11px;color:var(--text3);margin-top:1px}
-.topbar-right{display:flex;align-items:center;gap:8px}
-.sync-pill{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:500;padding:4px 10px;border-radius:20px}
-.sync-pill.synced{background:var(--green-bg);color:var(--green)}
-.sync-pill.saving{background:var(--yellow-bg);color:var(--yellow)}
-.sync-pill.error{background:var(--red-bg);color:var(--red)}
+/* ── Bottom nav ──────────────────────────────────── */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;height:calc(var(--nav-h) + var(--safe-b));background:var(--surface);border-top:1.5px solid var(--border);display:flex;align-items:flex-start;justify-content:space-around;padding-top:6px;padding-bottom:var(--safe-b);z-index:50;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 0;border:none;background:none;color:var(--text3);transition:color .2s;touch-action:manipulation;-webkit-tap-highlight-color:transparent;position:relative}
+.nav-item i{font-size:22px;transition:transform .2s}
+.nav-item span{font-size:10px;font-weight:600;letter-spacing:.02em}
+.nav-item.active{color:var(--accent)}
+.nav-item.active i{transform:scale(1.1)}
+.nav-dot{position:absolute;top:2px;right:calc(50% - 18px);width:7px;height:7px;background:var(--red);border-radius:50%;border:2px solid var(--surface);display:none}
+.nav-dot.show{display:block}
+/* FAB */
+.fab{position:fixed;bottom:calc(var(--nav-h) + var(--safe-b) + 16px);right:1.25rem;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:26px;color:#fff;box-shadow:0 4px 20px var(--accent-glow);z-index:45;transition:all .2s;touch-action:manipulation}
+.fab:hover{transform:scale(1.08);box-shadow:0 6px 28px var(--accent-glow)}
+.fab:active{transform:scale(.93)}
+.fab i{transition:transform .25s}
+.fab.open i{transform:rotate(45deg)}
 
-/* ── Tabs ── */
-.tabs{display:flex;gap:2px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:4px;margin-bottom:1.5rem}
-.tab{flex:1;padding:8px 12px;border:none;border-radius:9px;background:transparent;cursor:pointer;font-size:13px;font-weight:500;color:var(--text3);display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s}
-.tab.active{background:var(--surface2);color:var(--text);box-shadow:var(--shadow)}
-.tab:hover:not(.active){color:var(--text2)}
+/* ── Page content ────────────────────────────────── */
+.tab-content{display:none;padding-top:1rem}.tab-content.active{display:block}
 
-/* ── Stats bar ── */
-.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.5rem}
-.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;transition:border-color .15s}
-.stat-card:hover{border-color:var(--border2)}
-.stat-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
-.stat-val{font-size:22px;font-weight:700;letter-spacing:-.5px}
-.stat-sub{font-size:11px;color:var(--text3);margin-top:2px}
-.stat-green{color:var(--green)}.stat-red{color:var(--red)}.stat-yellow{color:var(--yellow)}.stat-accent{color:var(--accent)}
+/* ── Stats ───────────────────────────────────────── */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.25rem}
+.stat-c{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rlg);padding:12px 14px;transition:border-color .15s,transform .15s;cursor:default}
+.stat-c:active{transform:scale(.97)}
+.stat-lbl{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.stat-v{font-size:20px;font-weight:700;letter-spacing:-.5px}
+.stat-sub{font-size:10px;color:var(--text3);margin-top:1px}
+.c-acc{color:var(--accent)}.c-grn{color:var(--green)}.c-red{color:var(--red)}.c-yel{color:var(--yellow)}
 
-/* ── Controls ── */
-.controls{display:flex;gap:10px;margin-bottom:1rem;flex-wrap:wrap}
-.search-wrap{flex:1;min-width:180px;position:relative}
-.search-wrap input{padding-left:38px;background:var(--surface)}
-.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:17px;pointer-events:none}
-.cat-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.25rem}
-.cat-chip{padding:5px 13px;border-radius:20px;border:1px solid var(--border);background:transparent;cursor:pointer;font-size:12px;font-weight:500;color:var(--text3);transition:all .12s}
-.cat-chip:hover{border-color:var(--border2);color:var(--text2)}
-.cat-chip.active{background:var(--accent-bg);border-color:rgba(108,99,255,.5);color:#a5b4fc}
+/* ── Search & Controls ───────────────────────────── */
+.search-row{display:flex;gap:8px;margin-bottom:.9rem}
+.search-box{flex:1;position:relative}
+.search-box input{padding-left:40px;background:var(--surface)}
+.si{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:18px;pointer-events:none}
+.sort-btn{min-width:42px;padding:0 10px}
+.cat-scroll{display:flex;gap:6px;overflow-x:auto;margin-bottom:1rem;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px}
+.cat-scroll::-webkit-scrollbar{display:none}
+.cat-chip{padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:transparent;cursor:pointer;font-size:12px;font-weight:600;color:var(--text3);white-space:nowrap;transition:all .14s;touch-action:manipulation;flex-shrink:0}
+.cat-chip:active{transform:scale(.95)}
+.cat-chip.on{background:var(--accent-bg);border-color:rgba(124,111,255,.5);color:#b0a8ff}
 
-/* ── Entry cards ── */
+/* ── Entry cards ─────────────────────────────────── */
 .entries-list{display:flex;flex-direction:column;gap:7px}
-.entry-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:13px 16px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .15s}
-.entry-card:hover{border-color:var(--border2);background:var(--surface2);transform:translateY(-1px);box-shadow:var(--shadow)}
-.entry-avatar{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.entry-body{flex:1;min-width:0}
-.entry-name{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.entry-meta{display:flex;align-items:center;gap:7px;margin-top:3px;flex-wrap:wrap}
-.entry-user{font-size:12px;color:var(--text2)}
-.entry-url{font-size:12px;color:var(--accent);opacity:.8}
-.entry-right{display:flex;align-items:center;gap:7px;flex-shrink:0}
+.ec{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rlg);padding:13px 14px;display:flex;align-items:center;gap:13px;cursor:pointer;transition:border-color .15s,transform .15s,box-shadow .15s;position:relative;overflow:hidden;touch-action:manipulation}
+.ec::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at var(--rx,50%) var(--ry,50%),rgba(124,111,255,.14) 0%,transparent 60%);opacity:0;transition:opacity .4s}
+.ec:active::after,.ec.tapped::after{opacity:1}
+.ec:active{transform:scale(.985)}
+.ec:hover{border-color:var(--border2);box-shadow:var(--sh)}
+.e-av{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0;position:relative}
+.e-body{flex:1;min-width:0}
+.e-name{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.e-meta{display:flex;align-items:center;gap:6px;margin-top:3px;flex-wrap:wrap}
+.e-user{font-size:12px;color:var(--text2)}
+.e-url{font-size:12px;color:var(--accent);opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px}
+.e-age{font-size:10px;color:var(--text3)}
+.e-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
 .cat-badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px}
-.strength-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.sd-w{background:var(--red)}.sd-f{background:var(--yellow)}.sd-g{background:var(--green)}.sd-s{background:#10d9a0}
-.entry-age{font-size:10px;color:var(--text3)}
-.breach-badge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;background:var(--red-bg);color:var(--red);border:1px solid rgba(255,92,115,.3)}
+.sdot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.sw{background:var(--red)}.sf{background:var(--yellow)}.sg{background:var(--green)}.ss{background:#10d9a0}
+.weak-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;background:var(--red-bg);color:var(--red);border:1px solid rgba(255,85,114,.3)}
+/* Swipe-reveal actions */
+.ec-wrap{position:relative;overflow:hidden;border-radius:var(--rlg);margin-bottom:7px}
+.ec-actions{position:absolute;right:0;top:0;bottom:0;display:flex;align-items:center;gap:4px;padding:0 10px;background:var(--surface2);transform:translateX(100%);transition:transform .2s ease;border-radius:0 var(--rlg) var(--rlg) 0}
+.ec-wrap.revealed .ec-actions{transform:translateX(0)}
+.ec-wrap.revealed .ec{border-radius:var(--rlg) 0 0 var(--rlg);margin-bottom:0}
+.ec-act-btn{width:42px;height:42px;border-radius:10px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:transform .15s}
+.ec-act-btn:active{transform:scale(.9)}
+.act-copy{background:var(--accent-bg);color:var(--accent)}
+.act-edit{background:var(--surface3);color:var(--text2)}
+.act-del{background:var(--red-bg);color:var(--red)}
 
-/* ── Empty state ── */
-.empty-state{text-align:center;padding:4rem 1rem;color:var(--text3)}
-.empty-state i{font-size:52px;margin-bottom:1rem;display:block;opacity:.4}
-.empty-state h3{font-size:16px;font-weight:600;color:var(--text2);margin-bottom:.5rem}
-.empty-state p{font-size:13px;line-height:1.6}
+/* ── Empty state ─────────────────────────────────── */
+.empty{text-align:center;padding:3.5rem 1rem;color:var(--text3)}
+.empty i{font-size:54px;margin-bottom:1rem;display:block;opacity:.35}
+.empty h3{font-size:16px;font-weight:600;color:var(--text2);margin-bottom:.5rem}
+.empty p{font-size:13px;line-height:1.6}
 
-/* ── Modal ── */
-.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:100;display:flex;align-items:center;justify-content:center;padding:1rem}
-.modal-backdrop.hidden{display:none}
-.modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);padding:1.75rem;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:modal-in .18s ease}
-@keyframes modal-in{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:none}}
-.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
-.modal-title{font-size:17px;font-weight:700;letter-spacing:-.3px}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid var(--border)}
+/* ── Modal / Bottom sheet ────────────────────────── */
+.backdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);z-index:100;display:flex;align-items:flex-end;justify-content:center}
+.backdrop.hidden{display:none}
+.sheet{background:var(--surface);border-top:1.5px solid var(--border);border-radius:24px 24px 0 0;width:100%;max-width:620px;max-height:93vh;overflow-y:auto;box-shadow:var(--shlg);animation:sheet-up .28s cubic-bezier(.22,1,.36,1)}
+@keyframes sheet-up{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.sheet-drag{width:40px;height:4px;background:var(--border2);border-radius:2px;margin:10px auto 0;flex-shrink:0}
+.sheet-inner{padding:1.25rem 1.25rem calc(1.25rem + var(--safe-b))}
+.sheet-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem}
+.sheet-title{font-size:17px;font-weight:700;letter-spacing:-.3px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sheet-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:1.25rem;padding-top:1.1rem;border-top:1.5px solid var(--border)}
 
-/* ── Password field ── */
-.pw-field-wrap{position:relative}
-.pw-field-wrap input{padding-right:78px;font-family:var(--mono);letter-spacing:.03em}
-.pw-field-actions{position:absolute;right:6px;top:50%;transform:translateY(-50%);display:flex;gap:1px}
+/* ── Password field ──────────────────────────────── */
+.pfw{position:relative}
+.pfw input{padding-right:80px;font-family:var(--mono);letter-spacing:.04em}
+.pfa{position:absolute;right:6px;top:50%;transform:translateY(-50%);display:flex;gap:1px}
 
-/* ── Strength ── */
-.strength-track{height:4px;background:var(--border);border-radius:2px;margin-top:8px;overflow:hidden}
-.strength-fill{height:100%;border-radius:2px;transition:width .3s,background .3s}
-.strength-row{display:flex;align-items:center;justify-content:space-between;margin-top:5px}
-.strength-text{font-size:12px;font-weight:600}
-.strength-tips{font-size:11px;color:var(--text3)}
+/* ── Strength ────────────────────────────────────── */
+.str-track{height:5px;background:var(--border);border-radius:3px;margin-top:8px;overflow:hidden}
+.str-fill{height:100%;border-radius:3px;transition:width .35s cubic-bezier(.4,0,.2,1),background .35s}
+.str-row{display:flex;align-items:center;justify-content:space-between;margin-top:5px}
+.str-txt{font-size:12px;font-weight:700}
+.str-tip{font-size:11px;color:var(--text3)}
 
-/* ── Generator panel ── */
-.gen-panel{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;margin-top:8px}
-.gen-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+/* ── Generator ───────────────────────────────────── */
+.gen-panel{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r);padding:12px 13px;margin-top:8px}
+.gen-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
 .gen-row:last-child{margin-bottom:0}
-.gen-label{font-size:12px;color:var(--text2);font-weight:500}
-.gen-checks{display:flex;gap:12px;flex-wrap:wrap}
-.gen-check{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text2);cursor:pointer}
-.gen-check input{cursor:pointer;accent-color:var(--accent);width:auto}
-.len-val{font-weight:700;min-width:26px;text-align:right;font-size:14px;color:var(--text)}
-input[type=range]{width:120px;cursor:pointer;accent-color:var(--accent)}
+.gen-lbl{font-size:12px;color:var(--text2);font-weight:600}
+.gen-checks{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
+.gck{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text2);cursor:pointer;padding:3px 0}
+.gck input{cursor:pointer;accent-color:var(--accent);width:auto}
+input[type=range]{cursor:pointer;accent-color:var(--accent);-webkit-appearance:none;height:4px;border-radius:2px;background:var(--border2);outline:none;padding:0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent-glow);cursor:pointer}
+.pw-preview{font-family:var(--mono);font-size:13px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r);padding:10px 13px;word-break:break-all;color:var(--accent);letter-spacing:.05em;min-height:44px;cursor:pointer;transition:border-color .12s,background .12s;margin-top:8px;user-select:all}
+.pw-preview:hover{border-color:var(--border2);background:var(--surface3)}
+.pw-preview:active{background:var(--accent-bg)}
 
-/* ── Password preview ── */
-.pw-preview{font-family:var(--mono);font-size:13px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;word-break:break-all;color:var(--accent);letter-spacing:.05em;min-height:42px;cursor:pointer;transition:border-color .12s}
-.pw-preview:hover{border-color:var(--border2)}
-
-/* ── Health dashboard ── */
-.health-section{margin-bottom:2rem}
-.section-title{font-size:13px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.9rem;display:flex;align-items:center;gap:7px}
-.health-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.5rem}
-.health-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;text-align:center}
-.health-num{font-size:28px;font-weight:700;margin-bottom:4px}
-.health-lbl{font-size:12px;color:var(--text3)}
-.issue-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;display:flex;align-items:center;gap:12px;margin-bottom:7px;cursor:pointer;transition:all .12s}
-.issue-card:hover{border-color:var(--border2);background:var(--surface2)}
-.issue-icon{font-size:20px;flex-shrink:0;width:36px;text-align:center}
+/* ── Health ──────────────────────────────────────── */
+.h-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:1.25rem}
+.h-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rlg);padding:16px 12px;text-align:center;position:relative;overflow:hidden}
+.h-card::before{content:'';position:absolute;inset:-1px;border-radius:inherit;background:linear-gradient(135deg,var(--accent-bg),transparent);opacity:0;transition:opacity .3s}
+.h-card:hover::before{opacity:1}
+.h-num{font-size:28px;font-weight:700;margin-bottom:4px}
+.h-lbl{font-size:11px;color:var(--text3);font-weight:500}
+.h-bar{height:3px;border-radius:2px;margin-top:10px;overflow:hidden;background:var(--border)}
+.h-bar-fill{height:100%;border-radius:2px;transition:width 1s cubic-bezier(.4,0,.2,1)}
+.issue-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);padding:12px 14px;display:flex;align-items:center;gap:11px;margin-bottom:6px;cursor:pointer;transition:all .15s}
+.issue-card:hover,.issue-card:active{border-color:var(--border2);background:var(--surface2)}
+.issue-icon{font-size:20px;flex-shrink:0;width:34px;text-align:center}
 .issue-body{flex:1;min-width:0}
-.issue-name{font-weight:500;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.issue-name{font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .issue-desc{font-size:12px;color:var(--text3);margin-top:2px}
-.issue-type{font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;flex-shrink:0}
-.type-weak{background:var(--red-bg);color:var(--red)}
-.type-old{background:var(--yellow-bg);color:var(--yellow)}
-.type-dup{background:rgba(251,191,36,.1);color:var(--yellow)}
+.issue-type{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;flex-shrink:0}
+.it-w{background:var(--red-bg);color:var(--red)}.it-o{background:var(--yellow-bg);color:var(--yellow)}.it-d{background:var(--yellow-bg);color:var(--yellow)}
+.sec-title{font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.85rem;display:flex;align-items:center;gap:7px}
 
-/* ── Import/export ── */
-.import-zone{border:2px dashed var(--border2);border-radius:var(--radius-lg);padding:2.5rem;text-align:center;cursor:pointer;transition:all .15s;color:var(--text3)}
+/* ── Import/Export ───────────────────────────────── */
+.import-zone{border:2px dashed var(--border2);border-radius:var(--rlg);padding:2.25rem;text-align:center;cursor:pointer;transition:all .18s;color:var(--text3)}
 .import-zone:hover,.import-zone.drag-over{border-color:var(--accent);background:var(--accent-bg);color:var(--text2)}
-.import-zone i{font-size:36px;margin-bottom:.75rem;display:block}
-.export-options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.export-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;text-align:center;cursor:pointer;transition:all .15s}
-.export-card:hover{border-color:var(--accent);background:var(--accent-bg)}
-.export-card i{font-size:28px;color:var(--accent);margin-bottom:.5rem;display:block}
-.export-card h4{font-size:13px;font-weight:600;margin-bottom:3px}
-.export-card p{font-size:11px;color:var(--text3)}
+.import-zone i{font-size:36px;margin-bottom:.7rem;display:block}
+.exp-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.exp-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rlg);padding:16px;text-align:center;cursor:pointer;transition:all .18s;touch-action:manipulation}
+.exp-card:hover,.exp-card:active{border-color:var(--accent);background:var(--accent-bg);transform:scale(.98)}
+.exp-card i{font-size:28px;color:var(--accent);margin-bottom:.5rem;display:block}
+.exp-card h4{font-size:13px;font-weight:600;margin-bottom:3px}
+.exp-card p{font-size:11px;color:var(--text3)}
 
-/* ── Settings ── */
-.settings-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:1rem}
-.settings-row{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border)}
-.settings-row:last-child{border-bottom:none}
-.settings-row-left{flex:1}
-.settings-row-title{font-size:14px;font-weight:500}
-.settings-row-sub{font-size:12px;color:var(--text3);margin-top:2px}
-.toggle{position:relative;width:42px;height:24px;flex-shrink:0}
+/* ── Settings ────────────────────────────────────── */
+.s-section{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rlg);overflow:hidden;margin-bottom:1rem}
+.s-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1.5px solid var(--border)}
+.s-row:last-child{border-bottom:none}
+.s-row-l{flex:1;min-width:0;margin-right:12px}
+.s-row-t{font-size:14px;font-weight:500}
+.s-row-s{font-size:12px;color:var(--text3);margin-top:2px}
+.toggle{position:relative;width:44px;height:26px;flex-shrink:0}
 .toggle input{opacity:0;width:0;height:0}
-.toggle-slider{position:absolute;inset:0;background:var(--border2);border-radius:12px;cursor:pointer;transition:.2s}
-.toggle-slider::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
-.toggle input:checked+.toggle-slider{background:var(--accent)}
-.toggle input:checked+.toggle-slider::before{transform:translateX(18px)}
+.tsl{position:absolute;inset:0;background:var(--border2);border-radius:13px;cursor:pointer;transition:.2s}
+.tsl::before{content:'';position:absolute;width:20px;height:20px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.toggle input:checked+.tsl{background:var(--accent)}
+.toggle input:checked+.tsl::before{transform:translateX(18px)}
 
-/* ── Toast ── */
-#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:11px 18px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:9px;box-shadow:var(--shadow-lg);z-index:9999;transition:opacity .25s,transform .25s;white-space:nowrap}
-#toast.hidden{opacity:0;pointer-events:none;transform:translate(-50%,8px)}
-#toast.success{border-color:rgba(34,211,166,.4);color:var(--green)}
-#toast.error{border-color:rgba(255,92,115,.4);color:var(--red)}
-#toast.info{border-color:rgba(108,99,255,.4);color:#a5b4fc}
-#toast.warn{border-color:rgba(251,191,36,.4);color:var(--yellow)}
+/* ── Toast ───────────────────────────────────────── */
+#toast{position:fixed;top:calc(var(--top-h) + 10px);left:50%;transform:translateX(-50%);background:var(--surface2);border:1.5px solid var(--border2);border-radius:var(--rlg);padding:10px 18px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;box-shadow:var(--shlg);z-index:9999;transition:opacity .25s,transform .25s;white-space:nowrap;max-width:calc(100vw - 2rem)}
+#toast.hidden{opacity:0;pointer-events:none;transform:translate(-50%,-8px)}
+#toast.success{border-color:rgba(31,217,168,.4);color:var(--green)}
+#toast.error{border-color:rgba(255,85,114,.4);color:var(--red)}
+#toast.info{border-color:rgba(124,111,255,.4);color:#b0a8ff}
+#toast.warn{border-color:rgba(245,183,49,.4);color:var(--yellow)}
 
-/* ── Misc ── */
+/* ── Tags ────────────────────────────────────────── */
 .tag-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
-.tag{font-size:11px;padding:2px 9px;border-radius:12px;background:var(--surface3);color:var(--text2);border:1px solid var(--border);cursor:pointer;transition:all .12s}
-.tag:hover,.tag.active{background:var(--accent-bg);border-color:rgba(108,99,255,.4);color:#a5b4fc}
-.tag-remove{margin-left:4px;color:var(--text3);cursor:pointer}
-.tag-remove:hover{color:var(--red)}
-.fav-star{color:var(--text3);font-size:16px;cursor:pointer;transition:all .12s}
-.fav-star.active{color:var(--yellow)}
-.copied-flash{animation:flash .4s ease}
-@keyframes flash{0%,100%{opacity:1}50%{opacity:.4}}
-.section-divider{height:1px;background:var(--border);margin:1.5rem 0}
-.kbd{display:inline-block;font-size:11px;background:var(--surface3);border:1px solid var(--border2);border-radius:5px;padding:1px 6px;font-family:var(--mono);color:var(--text3)}
-.shortcut-row{display:flex;align-items:center;justify-content:space-between;font-size:13px;padding:6px 0;color:var(--text2)}
-.shortcut-row:not(:last-child){border-bottom:1px solid var(--border)}
+.tag{font-size:11px;padding:3px 9px;border-radius:12px;background:var(--surface3);color:var(--text2);border:1px solid var(--border);cursor:pointer;display:inline-flex;align-items:center;gap:4px;transition:all .12s}
+.tag:hover{border-color:var(--accent)}
+.tag-rm{color:var(--text3);cursor:pointer;font-size:14px;line-height:1}
+.tag-rm:hover{color:var(--red)}
 
-/* ── Category colors ── */
-.cat-social{background:rgba(139,92,246,.15);color:#c4b5fd}.av-social{background:rgba(139,92,246,.15)}
-.cat-banking{background:rgba(251,191,36,.12);color:#fde68a}.av-banking{background:rgba(251,191,36,.12)}
-.cat-work{background:rgba(34,211,166,.12);color:#6ee7b7}.av-work{background:rgba(34,211,166,.12)}
-.cat-email{background:rgba(255,92,115,.12);color:#fca5a5}.av-email{background:rgba(255,92,115,.12)}
-.cat-shopping{background:rgba(236,72,153,.12);color:#f9a8d4}.av-shopping{background:rgba(236,72,153,.12)}
-.cat-crypto{background:rgba(251,146,60,.12);color:#fed7aa}.av-crypto{background:rgba(251,146,60,.12)}
-.cat-other{background:rgba(100,116,139,.15);color:#94a3b8}.av-other{background:rgba(100,116,139,.15)}
+/* ── Fav ──────────────────────────────────────────── */
+.fav-btn{color:var(--text3);font-size:18px;cursor:pointer;transition:all .18s}
+.fav-btn.on{color:var(--yellow)}
+.fav-btn:active{transform:scale(1.3)}
 
-@media(max-width:600px){
-  .stats-grid{grid-template-columns:1fr 1fr}
-  .form-row{grid-template-columns:1fr}
-  .health-grid{grid-template-columns:1fr 1fr}
-  .export-options{grid-template-columns:1fr}
-  .entry-right .cat-badge{display:none}
-  .topbar-email{display:none}
+/* ── Category colors ─────────────────────────────── */
+.cs{background:rgba(139,92,246,.15);color:#c4b5fd}.as{background:rgba(139,92,246,.15)}
+.cb{background:rgba(245,183,49,.12);color:#fde68a}.ab{background:rgba(245,183,49,.12)}
+.cw{background:rgba(31,217,168,.12);color:#6ee7b7}.aw{background:rgba(31,217,168,.12)}
+.ce{background:rgba(255,85,114,.12);color:#fca5a5}.ae{background:rgba(255,85,114,.12)}
+.csh{background:rgba(236,72,153,.12);color:#f9a8d4}.ash{background:rgba(236,72,153,.12)}
+.cc{background:rgba(251,146,60,.12);color:#fed7aa}.ac{background:rgba(251,146,60,.12)}
+.co{background:rgba(100,116,139,.15);color:#94a3b8}.ao{background:rgba(100,116,139,.15)}
+
+/* ── KBD ──────────────────────────────────────────── */
+.kbd{display:inline-block;font-size:11px;background:var(--surface3);border:1px solid var(--border2);border-radius:4px;padding:1px 6px;font-family:var(--mono);color:var(--text3)}
+.sc-row{display:flex;align-items:center;justify-content:space-between;font-size:13px;padding:9px 0;color:var(--text2);border-bottom:1px solid var(--border)}
+.sc-row:last-child{border-bottom:none}
+
+/* ── Section divider ─────────────────────────────── */
+.sdiv{height:1px;background:var(--border);margin:1.5rem 0}
+
+/* ── Responsive ──────────────────────────────────── */
+@media(max-width:540px){
+  .stats-row{grid-template-columns:1fr 1fr}
+  .frow{grid-template-columns:1fr}
+  .h-grid{grid-template-columns:1fr 1fr}
+  .exp-opts{grid-template-columns:1fr}
+  .e-right .cat-badge{display:none}
+  .auth-card{border-radius:var(--rxl) var(--rxl) 0 0;position:fixed;bottom:0;left:0;right:0;max-width:100%;box-shadow:none;border-bottom:none;overflow-y:auto;max-height:95vh}
+  #auth-screen,#master-screen{align-items:flex-end;padding:0}
+  .topbar{border-radius:0}
+  .tb-name{font-size:14px}
+  .sync-pill span{display:none}
+  .topbar-right .btn-ghost span{display:none}
 }
+@media(max-width:380px){
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .cat-chip{font-size:11px;padding:5px 11px}
+}
+@media(min-width:768px){
+  .bottom-nav{display:none}
+  .fab{display:none}
+  .page-wrap{padding-bottom:2rem;padding-top:1rem}
+  /* Desktop top tabs */
+  .desktop-tabs{display:flex}
+  .page-wrap{padding-top:.25rem}
+}
+@media(max-width:767px){.desktop-tabs{display:none}}
+.desktop-tabs{gap:2px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rlg);padding:4px;margin-bottom:1.25rem}
+.dtab{flex:1;padding:8px 12px;border:none;border-radius:10px;background:transparent;cursor:pointer;font-size:13px;font-weight:600;color:var(--text3);display:flex;align-items:center;justify-content:center;gap:6px;transition:all .18s}
+.dtab.active{background:var(--surface2);color:var(--text);box-shadow:var(--sh)}
+.dtab:hover:not(.active){color:var(--text2)}
+
+/* ── Animations ──────────────────────────────────── */
+@keyframes ripple{to{transform:scale(4);opacity:0}}
+.ripple-el{position:absolute;border-radius:50%;background:rgba(124,111,255,.25);animation:ripple .55s linear;pointer-events:none;transform:scale(0)}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
 <div id="app">
 
-<!-- ═══ LOADING ═══ -->
-<div id="loading-screen" class="screen active">
-  <div class="loading-logo">SecureVault Pro</div>
+<!-- ════ LOADING ════ -->
+<div id="ls" class="screen active">
+  <div class="load-logo">SecureVault Pro</div>
   <div class="spinner"></div>
-  <span style="font-size:13px;color:var(--text3)">Initialising secure connection…</span>
+  <span style="font-size:13px;color:var(--text3)">Connecting securely…</span>
 </div>
 
-<!-- ═══ AUTH SCREEN ═══ -->
-<div id="auth-screen" class="screen">
-  <div class="auth-wrap">
-    <div class="auth-card">
-      <div class="auth-brand">
-        <div class="auth-logo"><i class="ti ti-shield-lock"></i></div>
-        <div class="auth-name">SecureVault Pro</div>
-        <div class="auth-tagline">End-to-end encrypted · Zero-knowledge</div>
-      </div>
-
-      <div class="auth-title" id="auth-title">Welcome back</div>
-      <div class="auth-sub" id="auth-sub">Your passwords never leave your device unencrypted</div>
-
-      <div class="alert alert-error" id="auth-error"><i class="ti ti-alert-circle"></i><span id="auth-error-txt"></span></div>
-      <div class="alert alert-info"  id="auth-info"><i class="ti ti-info-circle"></i><span id="auth-info-txt"></span></div>
-      <div class="alert alert-success" id="auth-ok"><i class="ti ti-check"></i><span id="auth-ok-txt"></span></div>
-
-      <div id="signup-name-wrap" style="display:none">
-        <div class="form-group">
-          <label class="form-label">Display name</label>
-          <input type="text" id="auth-name-inp" placeholder="Your name" autocomplete="name"/>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Email address</label>
-        <input type="email" id="auth-email" placeholder="you@email.com" autocomplete="email"/>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Account password</label>
-        <div class="pw-wrap">
-          <input type="password" id="auth-pw" placeholder="Account password" autocomplete="current-password"/>
-          <button class="pw-eye" onclick="toggleVis('auth-pw',this)" type="button"><i class="ti ti-eye"></i></button>
-        </div>
-      </div>
-
-      <div id="signup-extra" style="display:none">
-        <div class="form-group">
-          <label class="form-label">Confirm account password</label>
-          <div class="pw-wrap">
-            <input type="password" id="auth-pw2" placeholder="Confirm password" autocomplete="new-password"/>
-            <button class="pw-eye" onclick="toggleVis('auth-pw2',this)" type="button"><i class="ti ti-eye"></i></button>
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Vault master key <span style="color:var(--red)">*</span></label>
-          <div class="pw-wrap">
-            <input type="password" id="auth-mk" placeholder="Strong encryption key (≥12 chars)" autocomplete="new-password"/>
-            <button class="pw-eye" onclick="toggleVis('auth-mk',this)" type="button"><i class="ti ti-eye"></i></button>
-          </div>
-          <div class="form-hint"><i class="ti ti-alert-triangle" style="color:var(--yellow);font-size:12px"></i> This key encrypts all passwords client-side and is <strong>never stored</strong>. Write it down safely. If lost, your vault cannot be decrypted.</div>
-        </div>
-      </div>
-
-      <button class="btn btn-primary btn-full" id="auth-submit-btn" style="margin-top:.5rem">
-        <i class="ti ti-login"></i><span id="auth-submit-txt">Sign in</span>
-      </button>
-
-      <div class="divider-text">or</div>
-
-      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
-        <button class="link-btn" id="toggle-mode-btn">Don't have an account? Sign up</button>
-        <button class="link-btn" id="forgot-btn" style="color:var(--text2)">Forgot password?</button>
-      </div>
+<!-- ════ AUTH ════ -->
+<div id="as" class="screen">
+  <div class="auth-card">
+    <div class="brand-block">
+      <div class="brand-icon"><i class="ti ti-shield-lock"></i></div>
+      <div class="brand-name">SecureVault Pro</div>
+      <div class="brand-tag">End-to-end encrypted · Zero-knowledge</div>
+    </div>
+    <div class="auth-title" id="auth-title">Welcome back</div>
+    <div class="auth-sub" id="auth-sub">Passwords never leave your device unencrypted</div>
+    <div class="alert ae" id="a-err"><i class="ti ti-alert-circle" style="flex-shrink:0"></i><span id="a-err-t"></span></div>
+    <div class="alert ai" id="a-inf"><i class="ti ti-info-circle" style="flex-shrink:0"></i><span id="a-inf-t"></span></div>
+    <div class="alert as" id="a-ok"><i class="ti ti-check" style="flex-shrink:0"></i><span id="a-ok-t"></span></div>
+    <div id="su-name" style="display:none"><div class="fg"><label class="fl">Display name</label><input type="text" id="an" placeholder="Your name" autocomplete="name"/></div></div>
+    <div class="fg"><label class="fl">Email</label><input type="email" id="ae" placeholder="you@email.com" autocomplete="email"/></div>
+    <div class="fg"><label class="fl">Account password</label><div class="pw-w"><input type="password" id="ap" placeholder="Account password" autocomplete="current-password"/><button class="pw-e" onclick="tv('ap',this)" type="button"><i class="ti ti-eye"></i></button></div></div>
+    <div id="su-extra" style="display:none">
+      <div class="fg"><label class="fl">Confirm password</label><div class="pw-w"><input type="password" id="ap2" placeholder="Confirm password" autocomplete="new-password"/><button class="pw-e" onclick="tv('ap2',this)" type="button"><i class="ti ti-eye"></i></button></div></div>
+      <div class="fg"><label class="fl">Vault master key <span style="color:var(--red)">*</span></label><div class="pw-w"><input type="password" id="amk" placeholder="Strong encryption key (≥8 chars)" autocomplete="new-password"/><button class="pw-e" onclick="tv('amk',this)" type="button"><i class="ti ti-eye"></i></button></div><div class="fh"><i class="ti ti-alert-triangle" style="color:var(--yellow);font-size:12px"></i> This key encrypts your vault locally and is <strong>never stored</strong>. Write it somewhere safe.</div></div>
+    </div>
+    <button class="btn btn-primary btn-full" id="asub" style="margin-top:.5rem"><i class="ti ti-login"></i><span id="asub-t">Sign in</span></button>
+    <div class="divt">or</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+      <button class="link-btn" id="tm-btn">Don't have an account? Sign up</button>
+      <button class="link-btn" id="fw-btn" style="color:var(--text2)">Forgot password?</button>
     </div>
   </div>
 </div>
 
-<!-- ═══ MASTER KEY SCREEN ═══ -->
-<div id="master-screen" class="screen">
-  <div class="auth-wrap">
-    <div class="auth-card">
-      <div class="auth-brand">
-        <div class="auth-logo"><i class="ti ti-key"></i></div>
-        <div class="auth-name">Unlock Vault</div>
-        <div class="auth-tagline" id="master-email-lbl">Enter your master key to continue</div>
-      </div>
-
-      <div class="alert alert-error" id="master-error"><i class="ti ti-alert-circle"></i><span id="master-error-txt"></span></div>
-      <div class="alert alert-warn"  id="master-warn"><i class="ti ti-alert-triangle"></i><span id="master-warn-txt"></span></div>
-
-      <!-- Biometric section -->
-      <div id="biometric-section" style="display:none;margin-bottom:1rem">
-        <button class="biometric-btn" id="biometric-btn" onclick="tryBiometric()">
-          <span class="biometric-icon" id="bio-icon"><i class="ti ti-fingerprint"></i></span>
-          <span id="bio-label">Use fingerprint / Face ID</span>
-        </button>
-        <div class="divider-text" style="margin:1rem 0">or enter master key</div>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Vault master key</label>
-        <div class="pw-wrap">
-          <input type="password" id="master-key-inp" placeholder="Your vault master key" autocomplete="current-password"/>
-          <button class="pw-eye" onclick="toggleVis('master-key-inp',this)" type="button"><i class="ti ti-eye"></i></button>
-        </div>
-      </div>
-
-      <button class="btn btn-primary btn-full" id="master-btn">
-        <i class="ti ti-lock-open"></i><span>Unlock vault</span>
-      </button>
-
-      <!-- Register biometric -->
-      <div id="register-bio-wrap" style="display:none;margin-top:.75rem">
-        <button class="biometric-btn" id="register-bio-btn" onclick="registerBiometric()" style="border-style:dashed">
-          <span class="biometric-icon"><i class="ti ti-fingerprint"></i></span>
-          <span id="register-bio-lbl">Set up fingerprint / Face ID unlock</span>
-        </button>
-      </div>
-
-      <div style="text-align:center;margin-top:1.25rem">
-        <button class="link-btn" id="master-signout-btn" style="color:var(--text3)"><i class="ti ti-logout" style="font-size:13px"></i> Sign out</button>
-      </div>
+<!-- ════ MASTER KEY ════ -->
+<div id="ms" class="screen">
+  <div class="auth-card">
+    <div class="brand-block">
+      <div class="brand-icon"><i class="ti ti-key"></i></div>
+      <div class="brand-name">Unlock Vault</div>
+      <div class="brand-tag" id="m-email">Enter master key to continue</div>
     </div>
+    <div class="alert ae" id="m-err"><i class="ti ti-alert-circle" style="flex-shrink:0"></i><span id="m-err-t"></span></div>
+    <div id="bio-sec" style="display:none;margin-bottom:1rem">
+      <button class="bio-btn" id="bio-btn" onclick="tryBio()"><span class="bio-icon" id="bio-ico"><i class="ti ti-fingerprint"></i></span><span id="bio-lbl">Use fingerprint / Face ID</span></button>
+      <div class="divt" style="margin:.9rem 0">or enter master key</div>
+    </div>
+    <div class="fg"><label class="fl">Vault master key</label><div class="pw-w"><input type="password" id="mk" placeholder="Your vault master key" autocomplete="current-password"/><button class="pw-e" onclick="tv('mk',this)" type="button"><i class="ti ti-eye"></i></button></div></div>
+    <button class="btn btn-primary btn-full" id="m-btn"><i class="ti ti-lock-open"></i><span>Unlock vault</span></button>
+    <div id="reg-bio" style="display:none;margin-top:.75rem"><button class="bio-btn" onclick="regBio()" style="border-style:dashed"><span class="bio-icon"><i class="ti ti-fingerprint"></i></span><span>Set up fingerprint / Face ID</span></button></div>
+    <div style="text-align:center;margin-top:1.1rem"><button class="link-btn" id="m-so" style="color:var(--text3)"><i class="ti ti-logout" style="font-size:13px"></i> Sign out</button></div>
   </div>
 </div>
 
-<!-- ═══ MAIN APP ═══ -->
-<div id="main-screen" class="screen">
-
+<!-- ════ MAIN APP ════ -->
+<div id="main" class="screen">
   <!-- Topbar -->
   <div class="topbar">
     <div class="topbar-brand">
-      <div class="topbar-icon"><i class="ti ti-shield-lock"></i></div>
+      <div class="tb-icon"><i class="ti ti-shield-lock"></i></div>
       <div>
-        <div class="topbar-name">SecureVault Pro</div>
-        <div class="topbar-email" id="topbar-email"></div>
+        <div class="tb-name">SecureVault Pro</div>
+        <div class="tb-email" id="tb-email"></div>
       </div>
     </div>
     <div class="topbar-right">
-      <div class="sync-pill synced" id="sync-pill"><i class="ti ti-cloud-check"></i><span>Synced</span></div>
-      <button class="btn btn-ghost" id="lock-btn" style="padding:7px 12px;font-size:13px" title="Lock vault (Ctrl+L)">
-        <i class="ti ti-lock"></i>Lock
-      </button>
-      <button class="btn btn-ghost" id="sign-out-btn" style="padding:7px 12px;font-size:13px">
-        <i class="ti ti-logout"></i>Sign out
-      </button>
+      <div class="sync-pill sp-ok" id="sync-pill"><i class="ti ti-cloud-check"></i><span>Synced</span></div>
+      <button class="btn-icon" id="lock-btn" title="Lock (Ctrl+L)"><i class="ti ti-lock"></i></button>
+      <button class="btn-icon" id="so-btn" title="Sign out"><i class="ti ti-logout"></i></button>
     </div>
   </div>
 
-  <!-- Tabs -->
-  <div class="tabs">
-    <button class="tab active" id="tab-vault" onclick="switchTab('vault')"><i class="ti ti-lock-square"></i>Vault</button>
-    <button class="tab" id="tab-health" onclick="switchTab('health')"><i class="ti ti-heart-rate-monitor"></i>Health</button>
-    <button class="tab" id="tab-io" onclick="switchTab('io')"><i class="ti ti-arrows-exchange"></i>Import / Export</button>
-    <button class="tab" id="tab-settings" onclick="switchTab('settings')"><i class="ti ti-settings"></i>Settings</button>
+  <!-- Desktop tabs (hidden on mobile) -->
+  <div class="page-wrap">
+    <div class="desktop-tabs" id="dtabs">
+      <button class="dtab active" id="dt-vault" onclick="ST('vault')"><i class="ti ti-lock-square"></i>Vault</button>
+      <button class="dtab" id="dt-health" onclick="ST('health')"><i class="ti ti-heart-rate-monitor"></i>Health</button>
+      <button class="dtab" id="dt-io" onclick="ST('io')"><i class="ti ti-arrows-exchange"></i>Import / Export</button>
+      <button class="dtab" id="dt-settings" onclick="ST('settings')"><i class="ti ti-settings"></i>Settings</button>
+    </div>
+
+    <!-- ── VAULT ── -->
+    <div class="tab-content active" id="tc-vault">
+      <div class="stats-row" id="stats-row"></div>
+      <div class="search-row">
+        <div class="search-box"><i class="ti ti-search si"></i><input type="search" id="srch" placeholder="Search name, username, URL, tag…" autocomplete="off"/></div>
+        <button class="btn btn-ghost sort-btn" onclick="cycSort()" title="Sort"><i class="ti ti-arrows-sort"></i><span id="sort-lbl" style="font-size:12px">A–Z</span></button>
+      </div>
+      <div class="cat-scroll" id="cat-bar"></div>
+      <div class="entries-list" id="elist"></div>
+    </div>
+
+    <!-- ── HEALTH ── -->
+    <div class="tab-content" id="tc-health">
+      <div class="h-grid" id="h-grid"></div>
+      <div id="h-issues"></div>
+    </div>
+
+    <!-- ── IMPORT/EXPORT ── -->
+    <div class="tab-content" id="tc-io">
+      <div style="margin-bottom:1.5rem">
+        <div class="sec-title"><i class="ti ti-upload"></i>Import passwords</div>
+        <div class="alert ai show" style="margin-bottom:.9rem"><i class="ti ti-info-circle" style="flex-shrink:0"></i><span>Supports CSV (LastPass / Bitwarden / 1Password) and SecureVault JSON.</span></div>
+        <div class="import-zone" id="iz" onclick="document.getElementById('if').click()"><i class="ti ti-file-upload"></i><div style="font-size:14px;font-weight:600;margin-bottom:4px">Drop file or tap to browse</div><div style="font-size:12px">CSV or JSON · Max 10 MB</div></div>
+        <input type="file" id="if" accept=".csv,.json" style="display:none"/>
+      </div>
+      <div class="sdiv"></div>
+      <div>
+        <div class="sec-title"><i class="ti ti-download"></i>Export vault</div>
+        <div class="alert aw show" style="margin-bottom:.9rem"><i class="ti ti-alert-triangle" style="flex-shrink:0"></i><span>Exports contain plain-text passwords. Delete exports after use.</span></div>
+        <div class="exp-opts">
+          <div class="exp-card" onclick="expJSON()"><i class="ti ti-file-code"></i><h4>SecureVault JSON</h4><p>Encrypted backup · reimport anytime</p></div>
+          <div class="exp-card" onclick="expCSV()"><i class="ti ti-file-spreadsheet"></i><h4>CSV (Plaintext)</h4><p>Import into other managers</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SETTINGS ── -->
+    <div class="tab-content" id="tc-settings">
+      <div style="margin-bottom:1.25rem">
+        <div class="sec-title"><i class="ti ti-shield"></i>Security</div>
+        <div class="s-section">
+          <div class="s-row"><div class="s-row-l"><div class="s-row-t">Biometric unlock</div><div class="s-row-s" id="bio-st">Fingerprint / Face ID to unlock vault</div></div><button class="btn btn-ghost" id="bio-manage" onclick="manageBio()" style="padding:6px 12px;font-size:12px;flex-shrink:0">Manage</button></div>
+          <div class="s-row"><div class="s-row-l"><div class="s-row-t">Auto-lock after inactivity</div><div class="s-row-s">Lock when idle</div></div><select id="al-sel" style="width:auto;padding:6px 10px;font-size:12px;flex-shrink:0" onchange="saveSt()"><option value="0">Never</option><option value="1">1 min</option><option value="5" selected>5 min</option><option value="15">15 min</option><option value="30">30 min</option></select></div>
+          <div class="s-row"><div class="s-row-l"><div class="s-row-t">Clipboard clear</div><div class="s-row-s">Auto-clear after copying</div></div><select id="cl-sel" style="width:auto;padding:6px 10px;font-size:12px;flex-shrink:0" onchange="saveSt()"><option value="0">Never</option><option value="15">15s</option><option value="30" selected>30s</option><option value="60">60s</option></select></div>
+          <div class="s-row"><div class="s-row-l"><div class="s-row-t">Weakness warnings</div><div class="s-row-s">Highlight weak passwords</div></div><label class="toggle"><input type="checkbox" id="sw-tog" checked onchange="saveSt();renderEntries()"><span class="tsl"></span></label></div>
+        </div>
+      </div>
+      <div style="margin-bottom:1.25rem">
+        <div class="sec-title"><i class="ti ti-keyboard"></i>Keyboard shortcuts</div>
+        <div class="s-section"><div class="s-row" style="flex-direction:column;align-items:flex-start">
+          <div class="sc-row" style="width:100%"><span>New entry</span><span><kbd class="kbd">Ctrl</kbd>+<kbd class="kbd">N</kbd></span></div>
+          <div class="sc-row" style="width:100%"><span>Search</span><span><kbd class="kbd">Ctrl</kbd>+<kbd class="kbd">F</kbd></span></div>
+          <div class="sc-row" style="width:100%"><span>Lock vault</span><span><kbd class="kbd">Ctrl</kbd>+<kbd class="kbd">L</kbd></span></div>
+          <div class="sc-row" style="width:100%"><span>Close modal</span><span><kbd class="kbd">Esc</kbd></span></div>
+        </div></div>
+      </div>
+      <div style="margin-bottom:1.25rem">
+        <div class="sec-title"><i class="ti ti-info-circle"></i>About</div>
+        <div class="s-section">
+          <div class="s-row"><div class="s-row-l"><div class="s-row-t">Version</div><div class="s-row-s">SecureVault Pro 3.0</div></div></div>
+          <div class="s-row"><div class="s-row-l"><div class="s-row-t">Encryption</div><div class="s-row-s">AES-256-GCM · PBKDF2 150k · WebAuthn</div></div></div>
+          <div class="s-row"><div class="s-row-l"><div class="s-row-t">Storage</div><div class="s-row-s">Firebase Firestore (encrypted payloads only)</div></div></div>
+        </div>
+      </div>
+      <button class="btn btn-danger btn-full" onclick="clearVault()"><i class="ti ti-trash"></i>Delete all vault data</button>
+    </div>
   </div>
 
-  <!-- ── VAULT TAB ── -->
-  <div id="tab-vault-content">
-    <div class="stats-grid" id="stats-grid"></div>
+  <!-- Bottom nav (mobile) -->
+  <nav class="bottom-nav" id="bnav">
+    <button class="nav-item active" id="bn-vault" onclick="ST('vault')"><i class="ti ti-lock-square"></i><span>Vault</span></button>
+    <button class="nav-item" id="bn-health" onclick="ST('health')"><div class="nav-dot" id="nd-health"></div><i class="ti ti-heart-rate-monitor"></i><span>Health</span></button>
+    <button class="nav-item" id="bn-io" onclick="ST('io')"><i class="ti ti-arrows-exchange"></i><span>Import</span></button>
+    <button class="nav-item" id="bn-settings" onclick="ST('settings')"><i class="ti ti-settings"></i><span>Settings</span></button>
+  </nav>
 
-    <div class="controls">
-      <div class="search-wrap">
-        <i class="ti ti-search search-icon"></i>
-        <input type="search" id="search-inp" placeholder="Search name, username, URL, or tag…" autocomplete="off"/>
-      </div>
-      <button class="btn btn-ghost" id="sort-btn" title="Sort" onclick="cycleSort()">
-        <i class="ti ti-arrows-sort"></i><span id="sort-label">A–Z</span>
-      </button>
-      <button class="btn btn-primary" id="add-btn"><i class="ti ti-plus"></i>Add entry</button>
-    </div>
+  <!-- FAB (mobile) -->
+  <button class="fab" id="fab" onclick="openAdd()"><i class="ti ti-plus"></i></button>
+</div><!-- /#main -->
 
-    <div class="cat-bar" id="cat-bar"></div>
-    <div class="entries-list" id="entries-list"></div>
-  </div>
-
-  <!-- ── HEALTH TAB ── -->
-  <div id="tab-health-content" style="display:none">
-    <div class="health-grid" id="health-grid"></div>
-    <div id="health-issues"></div>
-  </div>
-
-  <!-- ── IMPORT/EXPORT TAB ── -->
-  <div id="tab-io-content" style="display:none">
-    <div class="health-section">
-      <div class="section-title"><i class="ti ti-upload"></i>Import passwords</div>
-      <div class="alert alert-info show" style="margin-bottom:1rem">
-        <i class="ti ti-info-circle"></i>
-        <span>Supports CSV (LastPass/Bitwarden/1Password format) and SecureVault JSON backup.</span>
-      </div>
-      <div class="import-zone" id="import-zone" onclick="document.getElementById('import-file').click()">
-        <i class="ti ti-file-upload"></i>
-        <div style="font-size:14px;font-weight:500;margin-bottom:4px">Drop file here or click to browse</div>
-        <div style="font-size:12px">CSV or JSON · Max 10 MB</div>
-      </div>
-      <input type="file" id="import-file" accept=".csv,.json" style="display:none"/>
-    </div>
-
-    <div class="section-divider"></div>
-
-    <div class="health-section">
-      <div class="section-title"><i class="ti ti-download"></i>Export vault</div>
-      <div class="alert alert-warn show" style="margin-bottom:1rem">
-        <i class="ti ti-alert-triangle"></i>
-        <span>Exported files contain decrypted passwords. Store them securely and delete after use.</span>
-      </div>
-      <div class="export-options">
-        <div class="export-card" onclick="exportJSON()">
-          <i class="ti ti-file-code"></i>
-          <h4>SecureVault JSON</h4>
-          <p>Encrypted backup — reimport anytime</p>
-        </div>
-        <div class="export-card" onclick="exportCSV()">
-          <i class="ti ti-file-spreadsheet"></i>
-          <h4>CSV (Plaintext)</h4>
-          <p>Import into other managers</p>
+<!-- ════ ENTRY SHEET ════ -->
+<div class="backdrop hidden" id="sheet-bd">
+  <div class="sheet" id="sheet" role="dialog" aria-modal="true">
+    <div class="sheet-drag"></div>
+    <div class="sheet-inner">
+      <div class="sheet-header">
+        <span class="sheet-title" id="sh-title">Add entry</span>
+        <div style="display:flex;gap:4px;align-items:center">
+          <button class="btn-icon fav-btn" id="fav-btn" onclick="togFav()" title="Favourite"><i class="ti ti-star"></i></button>
+          <button class="btn-icon" id="sh-close" title="Close"><i class="ti ti-x"></i></button>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- ── SETTINGS TAB ── -->
-  <div id="tab-settings-content" style="display:none">
-    <div class="health-section">
-      <div class="section-title"><i class="ti ti-shield"></i>Security</div>
-      <div class="settings-section">
-        <div class="settings-row">
-          <div class="settings-row-left">
-            <div class="settings-row-title">Biometric unlock</div>
-            <div class="settings-row-sub" id="bio-status-text">Use fingerprint or Face ID to unlock vault</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px">
-            <button class="btn btn-ghost" id="bio-manage-btn" onclick="manageBiometric()" style="padding:6px 12px;font-size:12px">Manage</button>
+      <div class="frow">
+        <div class="fg"><label class="fl">Name / site <span style="color:var(--red)">*</span></label><input type="text" id="fn" placeholder="e.g. GitHub" autocomplete="off"/></div>
+        <div class="fg"><label class="fl">Category</label><select id="fcat"><option value="Social">Social</option><option value="Banking">Banking</option><option value="Work">Work</option><option value="Email">Email</option><option value="Shopping">Shopping</option><option value="Crypto">Crypto</option><option value="Other" selected>Other</option></select></div>
+      </div>
+      <div class="frow">
+        <div class="fg"><label class="fl">Username / email</label><input type="text" id="fu" placeholder="your@email.com" autocomplete="off"/></div>
+        <div class="fg"><label class="fl">URL</label><input type="text" id="furl" placeholder="https://…" autocomplete="off"/></div>
+      </div>
+
+      <div class="fg">
+        <label class="fl">Password <span style="color:var(--red)">*</span></label>
+        <div class="pfw">
+          <input type="password" id="fpw" placeholder="Enter or generate" autocomplete="new-password" oninput="updStr(this.value)"/>
+          <div class="pfa">
+            <button class="btn-icon" id="fpw-eye" onclick="tv('fpw',this)" type="button"><i class="ti ti-eye"></i></button>
+            <button class="btn-icon" onclick="genFill()" type="button" title="Generate"><i class="ti ti-refresh"></i></button>
           </div>
         </div>
-        <div class="settings-row">
-          <div class="settings-row-left">
-            <div class="settings-row-title">Auto-lock after inactivity</div>
-            <div class="settings-row-sub">Lock vault automatically when idle</div>
-          </div>
-          <select id="autolock-select" style="width:auto;padding:6px 10px;font-size:12px" onchange="saveSettings()">
-            <option value="0">Never</option>
-            <option value="1">1 minute</option>
-            <option value="5" selected>5 minutes</option>
-            <option value="15">15 minutes</option>
-            <option value="30">30 minutes</option>
-          </select>
+        <div class="str-track"><div class="str-fill" id="str-fill" style="width:0%"></div></div>
+        <div class="str-row"><span class="str-txt" id="str-txt" style="color:var(--text3)">—</span><span class="str-tip" id="str-tip"></span></div>
+      </div>
+
+      <!-- Generator -->
+      <div class="gen-panel">
+        <div class="gen-row">
+          <span class="gen-lbl">Length: <span id="gl-v" style="color:var(--accent);font-weight:700">20</span></span>
+          <input type="range" id="gl" min="8" max="64" value="20" style="width:130px" oninput="document.getElementById('gl-v').textContent=this.value;liveGen()"/>
         </div>
-        <div class="settings-row">
-          <div class="settings-row-left">
-            <div class="settings-row-title">Clipboard clear delay</div>
-            <div class="settings-row-sub">Auto-clear clipboard after copying</div>
-          </div>
-          <select id="clip-select" style="width:auto;padding:6px 10px;font-size:12px" onchange="saveSettings()">
-            <option value="0">Never</option>
-            <option value="15">15 seconds</option>
-            <option value="30" selected>30 seconds</option>
-            <option value="60">60 seconds</option>
-          </select>
+        <div class="gen-checks">
+          <label class="gck"><input type="checkbox" id="gu" checked onchange="liveGen()"/> A–Z</label>
+          <label class="gck"><input type="checkbox" id="glc" checked onchange="liveGen()"/> a–z</label>
+          <label class="gck"><input type="checkbox" id="gn" checked onchange="liveGen()"/> 0–9</label>
+          <label class="gck"><input type="checkbox" id="gs" checked onchange="liveGen()"/> !@#</label>
+          <label class="gck"><input type="checkbox" id="ga" onchange="liveGen()"/> No ambiguous</label>
         </div>
-        <div class="settings-row">
-          <div class="settings-row-left">
-            <div class="settings-row-title">Show password strength warnings</div>
-            <div class="settings-row-sub">Highlight weak passwords in vault</div>
-          </div>
-          <label class="toggle"><input type="checkbox" id="strength-warn-toggle" checked onchange="saveSettings();renderEntries()"><span class="toggle-slider"></span></label>
-        </div>
+        <div class="gen-lbl" style="margin-top:10px;margin-bottom:5px">Preview <span style="color:var(--text3);font-size:11px;font-weight:400">(tap to use)</span></div>
+        <div class="pw-preview" id="pw-prev" onclick="usePrev()">—</div>
       </div>
-    </div>
 
-    <div class="health-section">
-      <div class="section-title"><i class="ti ti-keyboard"></i>Keyboard shortcuts</div>
-      <div class="settings-section">
-        <div class="settings-row" style="flex-direction:column;align-items:flex-start;gap:0">
-          <div class="shortcut-row" style="width:100%"><span>New entry</span><span><kbd class="kbd">Ctrl</kbd> + <kbd class="kbd">N</kbd></span></div>
-          <div class="shortcut-row" style="width:100%"><span>Search</span><span><kbd class="kbd">Ctrl</kbd> + <kbd class="kbd">F</kbd></span></div>
-          <div class="shortcut-row" style="width:100%"><span>Lock vault</span><span><kbd class="kbd">Ctrl</kbd> + <kbd class="kbd">L</kbd></span></div>
-          <div class="shortcut-row" style="width:100%"><span>Close modal</span><span><kbd class="kbd">Esc</kbd></span></div>
-        </div>
+      <div class="frow" style="margin-top:.9rem">
+        <div class="fg"><label class="fl">2FA secret (TOTP)</label><input type="text" id="ftotp" placeholder="Base32 secret" autocomplete="off"/></div>
+        <div class="fg"><label class="fl">Recovery email</label><input type="email" id="frec" placeholder="backup@email.com" autocomplete="off"/></div>
       </div>
-    </div>
 
-    <div class="health-section">
-      <div class="section-title"><i class="ti ti-info-circle"></i>About</div>
-      <div class="settings-section">
-        <div class="settings-row">
-          <div class="settings-row-left">
-            <div class="settings-row-title">Version</div>
-            <div class="settings-row-sub">SecureVault Pro 2.0</div>
-          </div>
-        </div>
-        <div class="settings-row">
-          <div class="settings-row-left">
-            <div class="settings-row-title">Encryption</div>
-            <div class="settings-row-sub">AES-256-GCM · PBKDF2 150,000 iterations · WebAuthn</div>
-          </div>
-        </div>
-        <div class="settings-row">
-          <div class="settings-row-left">
-            <div class="settings-row-title">Storage</div>
-            <div class="settings-row-sub">Firebase Firestore (encrypted payload only)</div>
-          </div>
-        </div>
+      <div class="fg">
+        <label class="fl">Tags</label>
+        <input type="text" id="ftag-in" placeholder="Type tag then press Enter…" autocomplete="off"/>
+        <div class="tag-row" id="ftag-row"></div>
       </div>
-    </div>
 
-    <div style="margin-top:1.5rem">
-      <button class="btn btn-danger btn-full" onclick="confirmClearVault()"><i class="ti ti-trash"></i>Delete all vault data</button>
-    </div>
-  </div>
-</div>
+      <div class="fg">
+        <label class="fl">Notes</label>
+        <textarea id="fnote" placeholder="Security questions, recovery codes, extra details…"></textarea>
+      </div>
 
-<!-- ═══ ENTRY MODAL ═══ -->
-<div id="modal-backdrop" class="modal-backdrop hidden">
-  <div class="modal" role="dialog" aria-modal="true">
-    <div class="modal-header">
-      <span class="modal-title" id="modal-title">Add entry</span>
-      <div style="display:flex;gap:4px;align-items:center">
-        <button class="btn-icon fav-star" id="fav-btn" onclick="toggleFav()" title="Favourite"><i class="ti ti-star"></i></button>
-        <button class="btn-icon" id="close-modal-btn" title="Close (Esc)"><i class="ti ti-x"></i></button>
+      <div class="sheet-footer">
+        <button class="btn btn-danger" id="del-btn" style="display:none;margin-right:auto" onclick="delEntry()"><i class="ti ti-trash"></i>Delete</button>
+        <button class="btn btn-ghost" onclick="closeSheet()">Cancel</button>
+        <button class="btn btn-primary" id="save-btn" onclick="saveEntry()"><i class="ti ti-device-floppy"></i><span id="save-t">Save entry</span></button>
       </div>
-    </div>
-
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Name / site <span style="color:var(--red)">*</span></label>
-        <input type="text" id="f-name" placeholder="e.g. GitHub" autocomplete="off"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Category</label>
-        <select id="f-cat">
-          <option value="Social">Social</option>
-          <option value="Banking">Banking</option>
-          <option value="Work">Work</option>
-          <option value="Email">Email</option>
-          <option value="Shopping">Shopping</option>
-          <option value="Crypto">Crypto</option>
-          <option value="Other" selected>Other</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Username / email</label>
-        <input type="text" id="f-user" placeholder="your@email.com" autocomplete="off"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">URL</label>
-        <input type="text" id="f-url" placeholder="https://…" autocomplete="off"/>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Password <span style="color:var(--red)">*</span></label>
-      <div class="pw-field-wrap">
-        <input type="password" id="f-pw" placeholder="Enter or generate" autocomplete="new-password" oninput="updateStrength(this.value)"/>
-        <div class="pw-field-actions">
-          <button class="btn-icon" id="f-pw-eye" onclick="toggleVis('f-pw',document.getElementById('f-pw-eye'))" title="Show/hide" type="button"><i class="ti ti-eye"></i></button>
-          <button class="btn-icon" onclick="genAndFill()" title="Generate" type="button"><i class="ti ti-refresh"></i></button>
-        </div>
-      </div>
-      <div class="strength-track"><div class="strength-fill" id="strength-fill" style="width:0%"></div></div>
-      <div class="strength-row">
-        <span class="strength-text" id="strength-text" style="color:var(--text3)">—</span>
-        <span class="strength-tips" id="strength-tips"></span>
-      </div>
-    </div>
-
-    <!-- Generator panel -->
-    <div class="gen-panel">
-      <div class="gen-row">
-        <span class="gen-label">Length: <span id="gen-len-val" style="color:var(--accent);font-weight:700">20</span></span>
-        <input type="range" id="gen-len" min="8" max="64" value="20" step="1" oninput="document.getElementById('gen-len-val').textContent=this.value;liveGenerate()"/>
-      </div>
-      <div class="gen-checks">
-        <label class="gen-check"><input type="checkbox" id="g-upper" checked onchange="liveGenerate()"/> A–Z</label>
-        <label class="gen-check"><input type="checkbox" id="g-lower" checked onchange="liveGenerate()"/> a–z</label>
-        <label class="gen-check"><input type="checkbox" id="g-num"   checked onchange="liveGenerate()"/> 0–9</label>
-        <label class="gen-check"><input type="checkbox" id="g-sym"   checked onchange="liveGenerate()"/> !@#…</label>
-        <label class="gen-check"><input type="checkbox" id="g-amb"   onchange="liveGenerate()"/> No ambiguous</label>
-      </div>
-      <div style="margin-top:10px">
-        <div class="gen-label" style="margin-bottom:5px">Preview <span style="color:var(--text3);font-size:11px">(click to copy)</span></div>
-        <div class="pw-preview" id="pw-preview" onclick="copyPreview()" title="Click to use this password">—</div>
-      </div>
-    </div>
-
-    <div class="form-row" style="margin-top:1rem">
-      <div class="form-group">
-        <label class="form-label">2FA / TOTP secret (optional)</label>
-        <input type="text" id="f-totp" placeholder="JBSWY3DPEHPK3PXP" autocomplete="off"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Recovery email</label>
-        <input type="email" id="f-recovery" placeholder="backup@email.com" autocomplete="off"/>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Tags</label>
-      <input type="text" id="f-tags-inp" placeholder="Add tag and press Enter…" autocomplete="off"/>
-      <div class="tag-row" id="f-tags-row"></div>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Notes</label>
-      <textarea id="f-note" placeholder="Security questions, recovery codes, extra details…"></textarea>
-    </div>
-
-    <div class="modal-footer">
-      <button class="btn btn-danger" id="delete-btn" style="display:none;margin-right:auto" onclick="deleteEntry()"><i class="ti ti-trash"></i>Delete</button>
-      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-primary" id="save-btn" onclick="saveEntry()"><i class="ti ti-device-floppy"></i><span id="save-btn-txt">Save entry</span></button>
     </div>
   </div>
 </div>
 
 <!-- Toast -->
 <div id="toast" class="hidden"></div>
+</div><!-- /#app -->
 
-<!-- ═══════════ FIREBASE + APP LOGIC ═══════════ -->
 <script type="module">
 import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged,sendPasswordResetEmail}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-import{getFirestore,doc,getDoc,setDoc,deleteDoc,serverTimestamp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import{getFirestore,doc,getDoc,setDoc,serverTimestamp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 const FB={apiKey:"AIzaSyDmgMUucaRBDRWibQ-K9LWBi0oRgvuSnzM",authDomain:"vault-e2da5.firebaseapp.com",projectId:"vault-e2da5",storageBucket:"vault-e2da5.firebasestorage.app",messagingSenderId:"647743099099",appId:"1:647743099099:web:b71a4de2bc92d09283bcfe"};
 const fb=initializeApp(FB),auth=getAuth(fb),db=getFirestore(fb);
 
-/* ── State ── */
-let CK=null,entries=[],editId=null,activeFilter='All',isSignup=false,CU=null,sortMode=0,currentTags=[],settings={autolock:5,clipDelay:30,strengthWarn:true},autoLockTimer=null,bioRegistered=false;
+let CK=null,entries=[],editId=null,activeF='All',isSignup=false,CU=null,sortM=0,curTags=[],settings={al:5,cd:30,sw:true},alTimer=null,editFav=false;
 
-const CAT={Social:{emoji:'👥',cls:'cat-social',av:'av-social'},Banking:{emoji:'🏦',cls:'cat-banking',av:'av-banking'},Work:{emoji:'💼',cls:'cat-work',av:'av-work'},Email:{emoji:'✉️',cls:'cat-email',av:'av-email'},Shopping:{emoji:'🛍️',cls:'cat-shopping',av:'av-shopping'},Crypto:{emoji:'₿',cls:'cat-crypto',av:'av-crypto'},Other:{emoji:'🔑',cls:'cat-other',av:'av-other'}};
+const CAT={Social:{e:'👥',cb:'cs',ab:'as'},Banking:{e:'🏦',cb:'cb',ab:'ab'},Work:{e:'💼',cb:'cw',ab:'aw'},Email:{e:'✉️',cb:'ce',ab:'ae'},Shopping:{e:'🛍️',cb:'csh',ab:'ash'},Crypto:{e:'₿',cb:'cc',ab:'ac'},Other:{e:'🔑',cb:'co',ab:'ao'}};
 
-/* ── DOM helpers ── */
 const $=id=>document.getElementById(id);
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active')}
 function esc(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML}
 
+/* ── Toast ── */
 let toastT;
 window.showToast=function(msg,type='success'){
-  clearTimeout(toastT);
-  const t=$('toast');
+  clearTimeout(toastT);const t=$('toast');
   const icons={success:'ti-check',error:'ti-x',info:'ti-info-circle',warn:'ti-alert-triangle'};
   t.innerHTML=`<i class="ti ${icons[type]||'ti-check'}"></i>${esc(msg)}`;
-  t.className=type;
-  toastT=setTimeout(()=>t.className='hidden',3200);
+  t.className=type;toastT=setTimeout(()=>t.className='hidden',3000);
 };
 
-function setSyncPill(s){
-  const p=$('sync-pill'),m={synced:{icon:'ti-cloud-check',txt:'Synced',cls:'synced'},saving:{icon:'ti-cloud-upload',txt:'Saving…',cls:'saving'},error:{icon:'ti-cloud-off',txt:'Error',cls:'error'}};
-  const v=m[s]||m.synced;p.className=`sync-pill ${v.cls}`;p.innerHTML=`<i class="ti ${v.icon}"></i><span>${v.txt}</span>`;
+/* ── Ripple ── */
+function ripple(el,ev){
+  const r=el.getBoundingClientRect();
+  const x=(ev?.clientX??r.left+r.width/2)-r.left;
+  const y=(ev?.clientY??r.top+r.height/2)-r.top;
+  const s=Math.max(r.width,r.height)*2;
+  const rEl=document.createElement('span');
+  rEl.className='ripple-el';Object.assign(rEl.style,{width:s+'px',height:s+'px',left:(x-s/2)+'px',top:(y-s/2)+'px'});
+  el.appendChild(rEl);rEl.addEventListener('animationend',()=>rEl.remove());
 }
+document.addEventListener('click',e=>{
+  const el=e.target.closest('.ec,.btn-primary,.btn-ghost');
+  if(el&&!el.classList.contains('btn-icon'))ripple(el,e);
+});
+
+/* ── Sync pill ── */
+function setSP(s){
+  const p=$('sync-pill'),m={ok:{i:'ti-cloud-check',t:'Synced',c:'sp-ok'},sv:{i:'ti-cloud-upload',t:'Saving…',c:'sp-save'},er:{i:'ti-cloud-off',t:'Error',c:'sp-err'}};
+  const v=m[s]||m.ok;p.className=`sync-pill ${v.c}`;p.innerHTML=`<i class="ti ${v.i}"></i><span>${v.t}</span>`;
+}
+
+/* ── Tab switch ── */
+window.ST=function(tab){
+  ['vault','health','io','settings'].forEach(t=>{
+    const tc=$(`tc-${t}`),dt=$(`dt-${t}`),bn=$(`bn-${t}`);
+    const on=t===tab;
+    tc.classList.toggle('active',on);
+    dt?.classList.toggle('active',on);
+    bn?.classList.toggle('active',on);
+  });
+  if(tab==='health')renderHealth();
+};
 
 /* ── Crypto ── */
 async function deriveKey(pw,uid){
-  const e=new TextEncoder(),salt=e.encode(uid+'_svp_v3');
+  const e=new TextEncoder(),s=e.encode(uid+'_svp3_salt');
   const km=await crypto.subtle.importKey('raw',e.encode(pw),{name:'PBKDF2'},false,['deriveKey']);
-  return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:150000,hash:'SHA-256'},km,{name:'AES-GCM',length:256},true,['encrypt','decrypt']);
+  return crypto.subtle.deriveKey({name:'PBKDF2',salt:s,iterations:150000,hash:'SHA-256'},km,{name:'AES-GCM',length:256},true,['encrypt','decrypt']);
 }
-async function exportKey(key){const raw=await crypto.subtle.exportKey('raw',key);return Array.from(new Uint8Array(raw))}
-async function importKey(arr){return crypto.subtle.importKey('raw',new Uint8Array(arr),{name:'AES-GCM'},true,['encrypt','decrypt'])}
+async function exportKey(k){return Array.from(new Uint8Array(await crypto.subtle.exportKey('raw',k)))}
+async function importKey(a){return crypto.subtle.importKey('raw',new Uint8Array(a),{name:'AES-GCM'},true,['encrypt','decrypt'])}
 async function enc(data,key){
-  const iv=crypto.getRandomValues(new Uint8Array(12)),ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,new TextEncoder().encode(JSON.stringify(data)));
+  const iv=crypto.getRandomValues(new Uint8Array(12));
+  const ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,new TextEncoder().encode(JSON.stringify(data)));
   return{iv:Array.from(iv),ct:Array.from(new Uint8Array(ct))};
 }
 async function dec(p,key){
@@ -774,685 +670,561 @@ async function dec(p,key){
   return JSON.parse(new TextDecoder().decode(pt));
 }
 
-/* ── WebAuthn / Biometric ── */
-const BIO_LS_KEY='svp_bio_cred';
-function hasBiometricRegistered(){
-  try{return!!localStorage.getItem(BIO_LS_KEY)}catch{return false}
-}
+/* ── WebAuthn ── */
+const BK='svp_bio';
+function hasBio(){try{return!!localStorage.getItem(BK)}catch{return false}}
+async function bioAvail(){if(!window.PublicKeyCredential)return false;try{return await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()}catch{return false}}
 
-window.registerBiometric=async function(){
+window.regBio=async function(){
   if(!CK||!CU)return;
-  const available=await checkBiometricAvailable();
-  if(!available){showToast('Biometric authentication not available on this device','error');return;}
+  if(!await bioAvail()){showToast('Biometrics not available on this device','error');return}
   try{
-    const challenge=crypto.getRandomValues(new Uint8Array(32));
-    const credOpts={
-      publicKey:{
-        challenge,
-        rp:{name:'SecureVault Pro',id:location.hostname||'localhost'},
-        user:{id:new TextEncoder().encode(CU.uid),name:CU.email,displayName:CU.email},
-        pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],
-        authenticatorSelection:{userVerification:'required',residentKey:'preferred'},
-        timeout:60000,
-        attestation:'none',
-      }
-    };
-    const cred=await navigator.credentials.create(credOpts);
-    // Store encrypted key material with credentialId for retrieval
-    const keyArr=await exportKey(CK);
-    const pinIv=crypto.getRandomValues(new Uint8Array(12));
-    // We encrypt the key using the credential id as a "binding" marker
-    // Actual protection is provided by the device authenticator requiring biometric
-    const credId=Array.from(new Uint8Array(cred.rawId));
-    const bioData=JSON.stringify({credId,keyArr,pinIv:Array.from(pinIv),uid:CU.uid});
-    localStorage.setItem(BIO_LS_KEY,btoa(bioData));
-    bioRegistered=true;
-    updateBioUI();
-    showToast('Biometric unlock registered!');
-    $('register-bio-wrap').style.display='none';
+    const ch=crypto.getRandomValues(new Uint8Array(32));
+    const cred=await navigator.credentials.create({publicKey:{challenge:ch,rp:{name:'SecureVault Pro',id:location.hostname||'localhost'},user:{id:new TextEncoder().encode(CU.uid),name:CU.email,displayName:CU.email},pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],authenticatorSelection:{userVerification:'required',residentKey:'preferred'},timeout:60000,attestation:'none'}});
+    const ka=await exportKey(CK);
+    const bd=JSON.stringify({credId:Array.from(new Uint8Array(cred.rawId)),keyArr:ka,uid:CU.uid});
+    localStorage.setItem(BK,btoa(bd));
+    updateBioUI();showToast('Biometric unlock registered!');$('reg-bio').style.display='none';
   }catch(e){
-    if(e.name==='NotAllowedError')showToast('Biometric registration cancelled','warn');
-    else showToast('Could not register biometric: '+e.message,'error');
+    if(e.name==='NotAllowedError')showToast('Registration cancelled','warn');
+    else showToast('Biometric error: '+e.message,'error');
   }
 };
 
-window.tryBiometric=async function(){
-  const stored=localStorage.getItem(BIO_LS_KEY);
-  if(!stored){showToast('No biometric registered','error');return;}
+window.tryBio=async function(){
+  const stored=localStorage.getItem(BK);if(!stored)return;
   try{
     const data=JSON.parse(atob(stored));
-    const challenge=crypto.getRandomValues(new Uint8Array(32));
-    const assertOpts={
-      publicKey:{
-        challenge,
-        allowCredentials:[{type:'public-key',id:new Uint8Array(data.credId),transports:['internal']}],
-        userVerification:'required',
-        timeout:60000,
-      }
-    };
-    const assertion=await navigator.credentials.get(assertOpts);
-    // Biometric verified by device — restore key
+    const ch=crypto.getRandomValues(new Uint8Array(32));
+    await navigator.credentials.get({publicKey:{challenge:ch,allowCredentials:[{type:'public-key',id:new Uint8Array(data.credId),transports:['internal']}],userVerification:'required',timeout:60000}});
     CK=await importKey(data.keyArr);
-    const ok=await loadVault();
-    if(ok){
-      $('topbar-email').textContent=CU.email;
-      show('main-screen');renderAll();showToast('Vault unlocked with biometrics');
-      startAutoLock();
-    }
+    if(await loadVault()){$('tb-email').textContent=CU.email;show('main');renderAll();showToast('Unlocked with biometrics');startAL()}
   }catch(e){
-    if(e.name==='NotAllowedError')showToast('Biometric authentication cancelled','warn');
-    else{showToast('Biometric failed — use master key','error');console.warn(e);}
+    if(e.name==='NotAllowedError')showToast('Biometric cancelled','warn');
+    else{showToast('Biometric failed — use master key','error')}
   }
 };
 
-async function checkBiometricAvailable(){
-  if(!window.PublicKeyCredential)return false;
-  try{return await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()}
-  catch{return false}
-}
-
-window.manageBiometric=async function(){
-  if(hasBiometricRegistered()){
-    if(confirm('Remove biometric unlock? You can re-register after unlocking with your master key.')){
-      localStorage.removeItem(BIO_LS_KEY);bioRegistered=false;updateBioUI();showToast('Biometric removed');
-    }
-  }else{
-    if(CK){await registerBiometric();}
-    else{showToast('Unlock vault first, then register biometrics from Settings','info');}
-  }
+window.manageBio=async function(){
+  if(hasBio()){if(confirm('Remove biometric unlock?')){localStorage.removeItem(BK);updateBioUI();showToast('Biometric removed')}}
+  else if(CK)await regBio();
+  else showToast('Unlock vault first, then register from Settings','info');
 };
 
 function updateBioUI(){
-  const has=hasBiometricRegistered();
-  if($('bio-status-text'))$('bio-status-text').textContent=has?'Biometric unlock is active — fingerprint / Face ID enabled':'No biometric registered. Unlock vault to set one up.';
-  if($('bio-manage-btn'))$('bio-manage-btn').textContent=has?'Remove':'Register';
+  const has=hasBio();
+  if($('bio-st'))$('bio-st').textContent=has?'Active — fingerprint / Face ID enabled':'Not configured. Unlock vault to register.';
+  if($('bio-manage'))$('bio-manage').textContent=has?'Remove':'Register';
 }
 
 /* ── Firebase vault ── */
 async function saveVault(){
-  if(!CK||!CU)return;setSyncPill('saving');
-  try{
-    const payload=await enc(entries,CK);
-    await setDoc(doc(db,'vaults',CU.uid),{payload:JSON.stringify(payload),updatedAt:serverTimestamp(),count:entries.length});
-    setSyncPill('synced');
-  }catch(e){setSyncPill('error');showToast('Sync failed — check connection','error');}
+  if(!CK||!CU)return;setSP('sv');
+  try{const payload=await enc(entries,CK);await setDoc(doc(db,'vaults',CU.uid),{payload:JSON.stringify(payload),updatedAt:serverTimestamp(),count:entries.length});setSP('ok')}
+  catch{setSP('er');showToast('Sync failed','error')}
 }
 async function loadVault(){
   if(!CK||!CU)return false;
-  try{
-    const snap=await getDoc(doc(db,'vaults',CU.uid));
-    entries=snap.exists()&&snap.data().payload?await dec(JSON.parse(snap.data().payload),CK):[];
-    return true;
-  }catch{showToast('Wrong master key — cannot decrypt vault','error');CK=null;return false;}
+  try{const snap=await getDoc(doc(db,'vaults',CU.uid));entries=snap.exists()&&snap.data().payload?await dec(JSON.parse(snap.data().payload),CK):[];return true}
+  catch{showToast('Wrong master key','error');CK=null;return false}
 }
 
 /* ── Auto-lock ── */
-function startAutoLock(){
-  stopAutoLock();
-  loadSettings();
-  const mins=parseInt($('autolock-select').value||'5');
-  if(!mins)return;
-  const reset=()=>{stopAutoLock();autoLockTimer=setTimeout(lockVault,mins*60000)};
+function startAL(){
+  stopAL();const m=parseInt($('al-sel').value||5);if(!m)return;
+  const reset=()=>{stopAL();alTimer=setTimeout(lockV,m*60000)};
+  document.addEventListener('touchstart',reset,{passive:true});
   document.addEventListener('mousemove',reset,{passive:true});
   document.addEventListener('keydown',reset,{passive:true});
-  autoLockTimer=setTimeout(lockVault,mins*60000);
+  alTimer=setTimeout(lockV,m*60000);
 }
-function stopAutoLock(){clearTimeout(autoLockTimer);autoLockTimer=null}
-function lockVault(){
-  CK=null;entries=[];stopAutoLock();
-  if($('main-screen').classList.contains('active')){
-    show('master-screen');showToast('Vault locked due to inactivity','info');
-  }
-}
+function stopAL(){clearTimeout(alTimer);alTimer=null}
+function lockV(){CK=null;entries=[];stopAL();if($('main').classList.contains('active')){show('ms');showToast('Vault locked','info')}}
 
 /* ── Settings ── */
-function saveSettings(){
-  settings={
-    autolock:parseInt($('autolock-select').value)||5,
-    clipDelay:parseInt($('clip-select').value)||30,
-    strengthWarn:$('strength-warn-toggle').checked
-  };
-  try{localStorage.setItem('svp_settings',JSON.stringify(settings))}catch{}
-}
-function loadSettings(){
-  try{const s=JSON.parse(localStorage.getItem('svp_settings')||'{}');if(s.autolock!==undefined){settings=s;$('autolock-select').value=s.autolock;$('clip-select').value=s.clipDelay;$('strength-warn-toggle').checked=s.strengthWarn}}catch{}
-}
-window.saveSettings=saveSettings;
+function saveSt(){settings={al:parseInt($('al-sel').value)||5,cd:parseInt($('cl-sel').value)||30,sw:$('sw-tog').checked};try{localStorage.setItem('svp3_st',JSON.stringify(settings))}catch{}}
+function loadSt(){try{const s=JSON.parse(localStorage.getItem('svp3_st')||'{}');if(s.al!==undefined){settings=s;$('al-sel').value=s.al;$('cl-sel').value=s.cd;$('sw-tog').checked=s.sw}}catch{}}
+window.saveSt=saveSt;
 
 /* ── Auth ── */
+const ERRS={'auth/user-not-found':'No account with that email','auth/wrong-password':'Wrong password','auth/invalid-credential':'Wrong email or password','auth/email-already-in-use':'Email already registered','auth/weak-password':'Password must be ≥6 characters','auth/invalid-email':'Invalid email','auth/too-many-requests':'Too many attempts — wait and try again','auth/network-request-failed':'No internet connection'};
+
 onAuthStateChanged(auth,async user=>{
-  $('loading-screen').classList.remove('active');
+  $('ls').classList.remove('active');
   if(user){
-    CU=user;
-    $('master-email-lbl').textContent='Signed in as '+user.email;
-    show('master-screen');
-    // Check biometric
-    const bioPossible=await checkBiometricAvailable();
-    const hasBio=hasBiometricRegistered();
-    $('biometric-section').style.display=hasBio&&bioPossible?'block':'none';
-    if(hasBio&&bioPossible){
-      $('bio-label').textContent='Use fingerprint / Face ID';
-      // Detect type
-      if(/android/i.test(navigator.userAgent))$('bio-icon').innerHTML='<i class="ti ti-fingerprint"></i>';
-      else if(/iphone|ipad|mac/i.test(navigator.userAgent))$('bio-icon').innerHTML='<i class="ti ti-scan-eye"></i>';
-    }
-    $('master-key-inp').focus();
-  }else{
-    CU=null;CK=null;entries=[];stopAutoLock();show('auth-screen');$('auth-email').focus();
-  }
+    CU=user;$('m-email').textContent='Signed in as '+user.email;
+    const ba=await bioAvail(),hb=hasBio();
+    $('bio-sec').style.display=hb&&ba?'block':'none';
+    if(hb&&ba){const ua=navigator.userAgent;$('bio-ico').innerHTML=/iphone|ipad|mac/i.test(ua)?'<i class="ti ti-scan-eye"></i>':'<i class="ti ti-fingerprint"></i>'}
+    show('ms');setTimeout(()=>$('mk').focus(),200);
+  }else{CU=null;CK=null;entries=[];stopAL();show('as');setTimeout(()=>$('ae').focus(),200)}
 });
 
-const ERRS={'auth/user-not-found':'No account with that email','auth/wrong-password':'Incorrect password','auth/invalid-credential':'Incorrect email or password','auth/email-already-in-use':'Email already registered','auth/weak-password':'Password must be ≥6 chars','auth/invalid-email':'Invalid email address','auth/too-many-requests':'Too many attempts — try later','auth/network-request-failed':'No internet connection'};
-
-$('auth-submit-btn').addEventListener('click',async()=>{
-  const email=$('auth-email').value.trim(),pw=$('auth-pw').value;
-  const errEl=$('auth-error');errEl.classList.remove('show');$('auth-ok').classList.remove('show');$('auth-info').classList.remove('show');
-  if(!email||!pw){$('auth-error-txt').textContent='Email and password required';errEl.classList.add('show');return}
-  const btn=$('auth-submit-btn');btn.disabled=true;$('auth-submit-txt').textContent=isSignup?'Creating…':'Signing in…';
+$('asub').addEventListener('click',async()=>{
+  const email=$('ae').value.trim(),pw=$('ap').value;
+  $('a-err').classList.remove('show');$('a-ok').classList.remove('show');$('a-inf').classList.remove('show');
+  if(!email||!pw){$('a-err-t').textContent='Email and password required';$('a-err').classList.add('show');return}
+  const btn=$('asub');btn.disabled=true;$('asub-t').textContent=isSignup?'Creating…':'Signing in…';
   try{
     if(isSignup){
-      const pw2=$('auth-pw2').value,mk=$('auth-mk').value;
-      if(pw!==pw2){$('auth-error-txt').textContent='Passwords do not match';errEl.classList.add('show');btn.disabled=false;$('auth-submit-txt').textContent='Sign up';return}
-      if(!mk||mk.length<8){$('auth-error-txt').textContent='Master key must be ≥8 characters';errEl.classList.add('show');btn.disabled=false;$('auth-submit-txt').textContent='Sign up';return}
+      const pw2=$('ap2').value,mk=$('amk').value;
+      if(pw!==pw2){$('a-err-t').textContent='Passwords do not match';$('a-err').classList.add('show');btn.disabled=false;$('asub-t').textContent='Sign up';return}
+      if(!mk||mk.length<8){$('a-err-t').textContent='Master key must be ≥8 characters';$('a-err').classList.add('show');btn.disabled=false;$('asub-t').textContent='Sign up';return}
       const cred=await createUserWithEmailAndPassword(auth,email,pw);
       CU=cred.user;CK=await deriveKey(mk,cred.user.uid);entries=[];
-      await saveVault();
-      $('auth-pw').value='';$('auth-mk').value='';
-      $('topbar-email').textContent=cred.user.email;
-      show('main-screen');renderAll();showToast('Vault created — welcome!');startAutoLock();
-    }else{
-      await signInWithEmailAndPassword(auth,email,pw);
-    }
-  }catch(e){$('auth-error-txt').textContent=ERRS[e.code]||e.message;errEl.classList.add('show')}
-  btn.disabled=false;$('auth-submit-txt').textContent=isSignup?'Sign up':'Sign in';
+      await saveVault();$('ap').value='';$('amk').value='';$('tb-email').textContent=cred.user.email;
+      show('main');loadSt();renderAll();showToast('Vault created!');startAL();updateBioUI();
+    }else{await signInWithEmailAndPassword(auth,email,pw)}
+  }catch(e){$('a-err-t').textContent=ERRS[e.code]||e.message;$('a-err').classList.add('show')}
+  btn.disabled=false;$('asub-t').textContent=isSignup?'Sign up':'Sign in';
 });
 
-$('toggle-mode-btn').addEventListener('click',()=>{
+$('tm-btn').addEventListener('click',()=>{
   isSignup=!isSignup;
   $('auth-title').textContent=isSignup?'Create account':'Welcome back';
-  $('auth-sub').textContent=isSignup?'Choose a strong master key for your vault':'Your passwords never leave your device unencrypted';
-  $('auth-submit-txt').textContent=isSignup?'Sign up':'Sign in';
-  $('toggle-mode-btn').textContent=isSignup?'Already have an account? Sign in':"Don't have an account? Sign up";
-  $('signup-name-wrap').style.display=isSignup?'block':'none';
-  $('signup-extra').style.display=isSignup?'block':'none';
-  $('forgot-btn').style.display=isSignup?'none':'';
-  ['auth-error','auth-info','auth-ok'].forEach(id=>$(id).classList.remove('show'));
+  $('auth-sub').textContent=isSignup?'Choose a strong master key for your vault':'Passwords never leave your device unencrypted';
+  $('asub-t').textContent=isSignup?'Sign up':'Sign in';
+  $('tm-btn').textContent=isSignup?'Already have an account? Sign in':"Don't have an account? Sign up";
+  $('su-name').style.display=isSignup?'block':'none';
+  $('su-extra').style.display=isSignup?'block':'none';
+  $('fw-btn').style.display=isSignup?'none':'';
+  ['a-err','a-inf','a-ok'].forEach(id=>$(id).classList.remove('show'));
 });
 
-$('forgot-btn').addEventListener('click',async()=>{
-  const email=$('auth-email').value.trim();
-  if(!email){$('auth-error-txt').textContent='Enter your email first';$('auth-error').classList.add('show');return}
-  try{await sendPasswordResetEmail(auth,email);$('auth-info-txt').textContent=`Reset email sent to ${email}`;$('auth-info').classList.add('show');$('auth-error').classList.remove('show')}
-  catch{$('auth-error-txt').textContent='Could not send reset email';$('auth-error').classList.add('show')}
+$('fw-btn').addEventListener('click',async()=>{
+  const email=$('ae').value.trim();
+  if(!email){$('a-err-t').textContent='Enter your email first';$('a-err').classList.add('show');return}
+  try{await sendPasswordResetEmail(auth,email);$('a-inf-t').textContent=`Reset email sent to ${email}`;$('a-inf').classList.add('show')}
+  catch{$('a-err-t').textContent='Could not send reset email';$('a-err').classList.add('show')}
 });
 
-['auth-email','auth-pw','auth-pw2','auth-mk'].forEach(id=>{
-  $(id)?.addEventListener('keydown',e=>{if(e.key==='Enter')$('auth-submit-btn').click()});
-});
+['ae','ap','ap2','amk'].forEach(id=>{$(id)?.addEventListener('keydown',e=>{if(e.key==='Enter')$('asub').click()})});
 
-$('master-btn').addEventListener('click',async()=>{
-  const key=$('master-key-inp').value;
-  const errEl=$('master-error');errEl.classList.remove('show');
-  if(!key){$('master-error-txt').textContent='Enter your vault master key';errEl.classList.add('show');return}
-  const btn=$('master-btn');btn.disabled=true;btn.innerHTML='<i class="ti ti-loader"></i> <span>Unlocking…</span>';
+$('m-btn').addEventListener('click',async()=>{
+  const key=$('mk').value;$('m-err').classList.remove('show');
+  if(!key){$('m-err-t').textContent='Enter your master key';$('m-err').classList.add('show');return}
+  const btn=$('m-btn');btn.disabled=true;btn.innerHTML='<i class="ti ti-loader" style="animation:spin .7s linear infinite"></i> <span>Unlocking…</span>';
   try{
     CK=await deriveKey(key,CU.uid);
-    const ok=await loadVault();
-    if(ok){
-      $('master-key-inp').value='';errEl.classList.remove('show');
-      $('topbar-email').textContent=CU.email;
-      bioRegistered=hasBiometricRegistered();
-      // Show register biometric option after successful unlock
-      const bioPossible=await checkBiometricAvailable();
-      if(bioPossible&&!bioRegistered){
-        $('register-bio-wrap').style.display='block';
-        $('register-bio-lbl').textContent='Set up fingerprint / Face ID (optional)';
-      }
-      show('main-screen');loadSettings();renderAll();showToast('Vault unlocked');startAutoLock();
-      updateBioUI();
-    }else{
-      $('master-error-txt').textContent='Wrong master key — vault cannot be decrypted';errEl.classList.add('show');CK=null;
-    }
-  }catch(e){$('master-error-txt').textContent='Unlock error: '+e.message;errEl.classList.add('show');CK=null}
+    if(await loadVault()){
+      $('mk').value='';$('tb-email').textContent=CU.email;
+      const ba=await bioAvail();if(ba&&!hasBio())$('reg-bio').style.display='block';
+      show('main');loadSt();renderAll();showToast('Vault unlocked');startAL();updateBioUI();
+    }else{$('m-err-t').textContent='Wrong master key';$('m-err').classList.add('show');CK=null}
+  }catch(e){$('m-err-t').textContent='Error: '+e.message;$('m-err').classList.add('show');CK=null}
   btn.disabled=false;btn.innerHTML='<i class="ti ti-lock-open"></i><span>Unlock vault</span>';
 });
-$('master-key-inp').addEventListener('keydown',e=>{if(e.key==='Enter')$('master-btn').click()});
-$('master-signout-btn').addEventListener('click',()=>signOut(auth));
-$('sign-out-btn').addEventListener('click',async()=>{CK=null;entries=[];stopAutoLock();await signOut(auth);showToast('Signed out','info')});
-$('lock-btn').addEventListener('click',()=>{lockVault();showToast('Vault locked','info')});
+$('mk').addEventListener('keydown',e=>{if(e.key==='Enter')$('m-btn').click()});
+$('m-so').addEventListener('click',()=>signOut(auth));
+$('so-btn').addEventListener('click',async()=>{CK=null;entries=[];stopAL();await signOut(auth);showToast('Signed out','info')});
+$('lock-btn').addEventListener('click',()=>lockV());
 
 /* ── Password utils ── */
-window.toggleVis=function(inputId,btn){
-  const inp=$(inputId);const isText=inp.type==='text';inp.type=isText?'password':'text';
-  btn.innerHTML=isText?'<i class="ti ti-eye"></i>':'<i class="ti ti-eye-off"></i>';
-};
+window.tv=function(id,btn){const i=$(id);const t=i.type==='text';i.type=t?'password':'text';btn.innerHTML=t?'<i class="ti ti-eye"></i>':'<i class="ti ti-eye-off"></i>'};
 
-function genPassword(){
-  const len=parseInt($('gen-len').value||20);
-  let chars='',exclude=[];
-  if($('g-amb').checked)exclude=['0','O','o','I','l','1'];
-  if($('g-upper').checked)chars+=_filterChars('ABCDEFGHIJKLMNOPQRSTUVWXYZ',exclude);
-  if($('g-lower').checked)chars+=_filterChars('abcdefghijklmnopqrstuvwxyz',exclude);
-  if($('g-num').checked)  chars+=_filterChars('0123456789',exclude);
-  if($('g-sym').checked)  chars+='!@#$%^&*()-_=+[]{}|;:,.<>?';
+function genPw(){
+  const len=parseInt($('gl').value||20);
+  let chars='',exc=$('ga').checked?'0Oo1IlL'.split(''):[]; 
+  if($('gu').checked)chars+='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').filter(c=>!exc.includes(c)).join('');
+  if($('glc').checked)chars+='abcdefghijklmnopqrstuvwxyz'.split('').filter(c=>!exc.includes(c)).join('');
+  if($('gn').checked)chars+='0123456789'.split('').filter(c=>!exc.includes(c)).join('');
+  if($('gs').checked)chars+='!@#$%^&*()-_=+[]{}|;:,.<>?';
   if(!chars)return'';
   const arr=new Uint32Array(len);crypto.getRandomValues(arr);
   return Array.from(arr).map(n=>chars[n%chars.length]).join('');
 }
-function _filterChars(s,exc){return s.split('').filter(c=>!exc.includes(c)).join('')}
+window.liveGen=function(){$('pw-prev').textContent=genPw()||'Pick at least one type'};
+window.genFill=function(){const pw=genPw();if(!pw){showToast('Pick at least one character type','error');return}$('fpw').value=pw;$('fpw').type='text';$('fpw-eye').innerHTML='<i class="ti ti-eye-off"></i>';$('pw-prev').textContent=pw;updStr(pw)};
+window.usePrev=function(){const pw=$('pw-prev').textContent;if(!pw||pw==='—')return;$('fpw').value=pw;$('fpw').type='text';$('fpw-eye').innerHTML='<i class="ti ti-eye-off"></i>';updStr(pw);showToast('Password set from preview')};
 
-window.liveGenerate=function(){
-  const pw=genPassword();
-  $('pw-preview').textContent=pw||'Select at least one character type';
-};
-
-window.genAndFill=function(){
-  const pw=genPassword();
-  if(!pw){showToast('Select at least one character type','error');return}
-  const inp=$('f-pw');inp.value=pw;inp.type='text';
-  $('f-pw-eye').innerHTML='<i class="ti ti-eye-off"></i>';
-  $('pw-preview').textContent=pw;
-  updateStrength(pw);
-};
-
-window.copyPreview=function(){
-  const pw=$('pw-preview').textContent;
-  if(!pw||pw==='—')return;
-  navigator.clipboard.writeText(pw).then(()=>{
-    $('f-pw').value=pw;$('f-pw').type='text';
-    $('f-pw-eye').innerHTML='<i class="ti ti-eye-off"></i>';
-    updateStrength(pw);
-    $('pw-preview').classList.add('copied-flash');
-    setTimeout(()=>$('pw-preview').classList.remove('copied-flash'),400);
-    showToast('Password copied to field');
-  }).catch(()=>{});
-};
-
-function getStrength(pw){
-  if(!pw)return{score:0,label:'',cls:'',tips:''};
+function getStr(pw){
+  if(!pw)return{sc:0,lbl:'',col:'',tip:''};
   let s=0,tips=[];
-  if(pw.length>=8)s++;else tips.push('make it longer');
-  if(pw.length>=14)s++;
-  if(pw.length>=20)s++;
+  if(pw.length>=8)s++;else tips.push('make longer');
+  if(pw.length>=14)s++;if(pw.length>=20)s++;
   if(/[A-Z]/.test(pw))s++;else tips.push('add uppercase');
   if(/[a-z]/.test(pw))s++;
   if(/[0-9]/.test(pw))s++;else tips.push('add numbers');
   if(/[^A-Za-z0-9]/.test(pw))s++;else tips.push('add symbols');
-  const lvl=s<=2?0:s<=4?1:s<=5?2:3;
-  return[{score:20,label:'Weak',cls:'weak',color:'var(--red)'},{score:50,label:'Fair',cls:'fair',color:'var(--yellow)'},{score:75,label:'Good',cls:'good',color:'var(--green)'},{score:100,label:'Strong',cls:'strong',color:'#10d9a0'}][lvl];
+  const lv=s<=2?0:s<=4?1:s<=5?2:3;
+  return[{sc:20,lbl:'Weak',col:'var(--red)',tip:tips[0]||''},{sc:50,lbl:'Fair',col:'var(--yellow)',tip:tips[0]||''},{sc:75,lbl:'Good',col:'var(--green)',tip:''},{sc:100,lbl:'Strong',col:'#10d9a0',tip:''}][lv];
 }
-
-window.updateStrength=function(pw){
-  const st=getStrength(pw);
-  const fill=$('strength-fill'),txt=$('strength-text'),tips=$('strength-tips');
-  fill.style.width=st.score+'%';
-  fill.style.background=st.color||'transparent';
-  txt.textContent=st.label||'—';txt.style.color=st.color||'var(--text3)';
-  tips.textContent=st.tips?'Tip: '+st.tips:'';
+window.updStr=function(pw){
+  const st=getStr(pw),f=$('str-fill'),t=$('str-txt'),tip=$('str-tip');
+  f.style.width=st.sc+'%';f.style.background=st.col||'transparent';
+  t.textContent=st.lbl||'—';t.style.color=st.col||'var(--text3)';
+  tip.textContent=st.tip?'Tip: '+st.tip:'';
 };
 
 /* ── Tags ── */
-function renderTagRow(){
-  const row=$('f-tags-row');row.innerHTML='';
-  currentTags.forEach((t,i)=>{
-    const el=document.createElement('span');
-    el.className='tag active';
-    el.innerHTML=`${esc(t)}<span class="tag-remove" onclick="removeTag(${i})">×</span>`;
-    row.appendChild(el);
+function renderTags(){
+  $('ftag-row').innerHTML='';
+  curTags.forEach((t,i)=>{
+    const el=document.createElement('span');el.className='tag';
+    el.innerHTML=`${esc(t)}<span class="tag-rm" onclick="rmTag(${i})">×</span>`;
+    $('ftag-row').appendChild(el);
   });
 }
-window.removeTag=function(i){currentTags.splice(i,1);renderTagRow()};
-$('f-tags-inp').addEventListener('keydown',e=>{
-  if(e.key==='Enter'||e.key===','){ e.preventDefault();
-    const v=e.target.value.trim().replace(/,$/,'');
-    if(v&&!currentTags.includes(v)){currentTags.push(v);renderTagRow()}
-    e.target.value='';
-  }
+window.rmTag=i=>{curTags.splice(i,1);renderTags()};
+$('ftag-in').addEventListener('keydown',e=>{
+  if(e.key==='Enter'||e.key===','){e.preventDefault();const v=e.target.value.trim().replace(/,$/,'');if(v&&!curTags.includes(v)){curTags.push(v);renderTags()}e.target.value=''}
 });
 
-/* ── Favourites ── */
-let editIsFav=false;
-window.toggleFav=function(){
-  editIsFav=!editIsFav;
-  const btn=$('fav-btn');
-  btn.className='btn-icon fav-star'+(editIsFav?' active':'');
-  btn.innerHTML=editIsFav?'<i class="ti ti-star-filled"></i>':'<i class="ti ti-star"></i>';
-};
+/* ── Fav ── */
+window.togFav=function(){editFav=!editFav;$('fav-btn').className='btn-icon fav-btn'+(editFav?' on':'');$('fav-btn').innerHTML=editFav?'<i class="ti ti-star-filled"></i>':'<i class="ti ti-star"></i>'};
 
 /* ── Sort ── */
 const SORTS=['A–Z','Z–A','Newest','Oldest','Weakest'];
-window.cycleSort=function(){
-  sortMode=(sortMode+1)%SORTS.length;
-  $('sort-label').textContent=SORTS[sortMode];
-  renderEntries();
-};
+window.cycSort=function(){sortM=(sortM+1)%SORTS.length;$('sort-lbl').textContent=SORTS[sortM];renderEntries()};
 
-/* ── Tabs ── */
-window.switchTab=function(tab){
-  ['vault','health','io','settings'].forEach(t=>{
-    $(`tab-${t}`).classList.toggle('active',t===tab);
-    $(`tab-${t}-content`).style.display=t===tab?'block':'none';
-  });
-  if(tab==='health')renderHealth();
-};
-
-/* ── Clipboard ── */
-async function copyToClipboard(text,label='Copied'){
-  try{
-    await navigator.clipboard.writeText(text);
-    showToast(label);
-    const delay=parseInt($('clip-select')||{value:'30'}.value)*1000;
-    if(delay>0)setTimeout(async()=>{try{const t=await navigator.clipboard.readText();if(t===text)await navigator.clipboard.writeText('')}catch{}},delay);
-  }catch{showToast('Copy failed — allow clipboard access','error')}
+/* ── Sheet ── */
+function openAdd(){
+  editId=null;curTags=[];editFav=false;
+  $('sh-title').textContent='Add entry';$('save-t').textContent='Save entry';
+  $('del-btn').style.display='none';
+  $('fav-btn').className='btn-icon fav-btn';$('fav-btn').innerHTML='<i class="ti ti-star"></i>';
+  ['fn','fu','furl','fpw','ftotp','frec','fnote','ftag-in'].forEach(id=>$(id).value='');
+  $('fcat').value='Other';$('fpw').type='password';$('fpw-eye').innerHTML='<i class="ti ti-eye"></i>';
+  updStr('');renderTags();liveGen();
+  $('sheet-bd').classList.remove('hidden');setTimeout(()=>$('fn').focus(),100);
 }
+window.openAdd=openAdd;
 
-window.copyPassword=async function(id,evt){
-  evt.stopPropagation();
+function openEdit(id){
   const e=entries.find(x=>x.id===id);if(!e)return;
-  const delay=settings.clipDelay*1000;
-  try{
-    await navigator.clipboard.writeText(e.password);
-    showToast('Password copied'+(delay?` — clears in ${settings.clipDelay}s`:''));
-    if(delay)setTimeout(async()=>{try{const t=await navigator.clipboard.readText();if(t===e.password)await navigator.clipboard.writeText('')}catch{}},delay);
-  }catch{showToast('Copy failed','error')}
-};
-
-window.copyUsername=async function(id,evt){
-  evt.stopPropagation();
-  const e=entries.find(x=>x.id===id);if(!e||!e.username)return;
-  await copyToClipboard(e.username,'Username copied');
-};
-
-/* ── Open edit entry ── */
-window.openEdit=function(id){openEditModal(id)};
-
-function openAddModal(){
-  editId=null;currentTags=[];editIsFav=false;
-  $('modal-title').textContent='Add entry';
-  $('save-btn-txt').textContent='Save entry';
-  $('delete-btn').style.display='none';
-  $('fav-btn').className='btn-icon fav-star';
-  $('fav-btn').innerHTML='<i class="ti ti-star"></i>';
-  ['f-name','f-user','f-url','f-pw','f-totp','f-recovery','f-note','f-tags-inp'].forEach(id=>$(id).value='');
-  $('f-cat').value='Other';
-  $('f-pw').type='password';$('f-pw-eye').innerHTML='<i class="ti ti-eye"></i>';
-  updateStrength('');renderTagRow();
-  liveGenerate();
-  $('modal-backdrop').classList.remove('hidden');
-  setTimeout(()=>$('f-name').focus(),80);
+  editId=id;curTags=[...(e.tags||[])];editFav=!!e.fav;
+  $('sh-title').textContent='Edit entry';$('save-t').textContent='Update entry';
+  $('del-btn').style.display='inline-flex';
+  $('fav-btn').className='btn-icon fav-btn'+(editFav?' on':'');
+  $('fav-btn').innerHTML=editFav?'<i class="ti ti-star-filled"></i>':'<i class="ti ti-star"></i>';
+  $('fn').value=e.name||'';$('fu').value=e.username||'';$('furl').value=e.url||'';
+  $('fpw').value=e.password||'';$('ftotp').value=e.totp||'';$('frec').value=e.recovery||'';
+  $('fnote').value=e.note||'';$('fcat').value=e.category||'Other';
+  $('fpw').type='password';$('fpw-eye').innerHTML='<i class="ti ti-eye"></i>';
+  updStr(e.password||'');renderTags();liveGen();
+  $('sheet-bd').classList.remove('hidden');
 }
+window.openEdit=openEdit;
 
-function openEditModal(id){
-  const e=entries.find(x=>x.id===id);if(!e)return;
-  editId=id;currentTags=[...(e.tags||[])];editIsFav=!!e.fav;
-  $('modal-title').textContent='Edit entry';
-  $('save-btn-txt').textContent='Update entry';
-  $('delete-btn').style.display='inline-flex';
-  $('fav-btn').className='btn-icon fav-star'+(editIsFav?' active':'');
-  $('fav-btn').innerHTML=editIsFav?'<i class="ti ti-star-filled"></i>':'<i class="ti ti-star"></i>';
-  $('f-name').value=e.name||'';
-  $('f-user').value=e.username||'';
-  $('f-url').value=e.url||'';
-  $('f-pw').value=e.password||'';
-  $('f-totp').value=e.totp||'';
-  $('f-recovery').value=e.recovery||'';
-  $('f-note').value=e.note||'';
-  $('f-cat').value=e.category||'Other';
-  $('f-pw').type='password';$('f-pw-eye').innerHTML='<i class="ti ti-eye"></i>';
-  updateStrength(e.password||'');renderTagRow();liveGenerate();
-  $('modal-backdrop').classList.remove('hidden');
-}
+window.closeSheet=function(){$('sheet-bd').classList.add('hidden');editId=null};
+$('sh-close').addEventListener('click',closeSheet);
+$('sheet-bd').addEventListener('click',e=>{if(e.target===$('sheet-bd'))closeSheet()});
 
-window.closeModal=function(){$('modal-backdrop').classList.add('hidden');editId=null};
-$('close-modal-btn').addEventListener('click',closeModal);
-$('modal-backdrop').addEventListener('click',e=>{if(e.target===$('modal-backdrop'))closeModal()});
+/* ── Swipe to close sheet ── */
+let shY0=null;
+$('sheet').addEventListener('touchstart',e=>{shY0=e.touches[0].clientY},{passive:true});
+$('sheet').addEventListener('touchmove',e=>{
+  if(shY0===null)return;
+  const dy=e.touches[0].clientY-shY0;
+  if(dy>0&&$('sheet').scrollTop===0){$('sheet').style.transform=`translateY(${dy}px)`;$('sheet').style.transition='none'}
+},{passive:true});
+$('sheet').addEventListener('touchend',e=>{
+  if(shY0===null)return;
+  const dy=e.changedTouches[0].clientY-shY0;
+  $('sheet').style.transition='';$('sheet').style.transform='';
+  if(dy>90)closeSheet();shY0=null;
+});
 
 window.saveEntry=async function(){
-  const name=$('f-name').value.trim(),pw=$('f-pw').value;
+  const name=$('fn').value.trim(),pw=$('fpw').value;
   if(!name){showToast('Name is required','error');return}
   if(!pw){showToast('Password is required','error');return}
   const btn=$('save-btn');btn.disabled=true;
   const entry={
-    id:editId||crypto.randomUUID(),name,
-    username:$('f-user').value.trim(),
-    url:$('f-url').value.trim(),
+    id:editId||crypto.randomUUID(),
+    name,
+    username:$('fu').value.trim(),
+    url:$('furl').value.trim(),
     password:pw,
-    category:$('f-cat').value,
-    note:$('f-note').value.trim(),
-    totp:$('f-totp').value.trim(),
-    recovery:$('f-recovery').value.trim(),
-    tags:[...currentTags],
-    fav:editIsFav,
+    category:$('fcat').value,
+    note:$('fnote').value.trim(),
+    totp:$('ftotp').value.trim(),
+    recovery:$('frec').value.trim(),
+    tags:[...curTags],
+    fav:editFav,
     created:editId?(entries.find(x=>x.id===editId)||{}).created||Date.now():Date.now(),
     updated:Date.now()
   };
   if(editId){const i=entries.findIndex(x=>x.id===editId);if(i>-1)entries[i]=entry}
   else entries.unshift(entry);
-  await saveVault();closeModal();renderAll();showToast(editId?'Entry updated':'Entry saved');
+  await saveVault();closeSheet();renderAll();
+  showToast(editId?'Entry updated':'Entry saved');
   btn.disabled=false;
 };
 
-window.deleteEntry=async function(){
+window.delEntry=async function(){
   if(!editId||!confirm('Delete this entry permanently?'))return;
   entries=entries.filter(x=>x.id!==editId);
-  await saveVault();closeModal();renderAll();showToast('Entry deleted');
+  await saveVault();closeSheet();renderAll();showToast('Entry deleted');
 };
 
-/* ── Render vault ── */
-function renderAll(){renderStats();renderCatBar();renderEntries()}
+/* ── Copy ── */
+window.cpPw=async function(id,ev){
+  ev.stopPropagation();const e=entries.find(x=>x.id===id);if(!e)return;
+  try{
+    await navigator.clipboard.writeText(e.password);
+    showToast('Password copied');
+    const d=settings.cd*1000;
+    if(d)setTimeout(async()=>{try{const t=await navigator.clipboard.readText();if(t===e.password)await navigator.clipboard.writeText('')}catch{}},d);
+  }catch{showToast('Copy failed','error')}
+};
+window.cpUser=async function(id,ev){
+  ev.stopPropagation();const e=entries.find(x=>x.id===id);if(!e||!e.username)return;
+  try{await navigator.clipboard.writeText(e.username);showToast('Username copied')}catch{showToast('Copy failed','error')}
+};
+
+/* ── Swipe reveal on cards ── */
+let swX0=null,swEl=null;
+document.addEventListener('touchstart',e=>{
+  const w=e.target.closest('.ec-wrap');
+  if(!w)return;swX0=e.touches[0].clientX;swEl=w;
+},{passive:true});
+document.addEventListener('touchmove',e=>{
+  if(swX0===null||!swEl)return;
+  const dx=swX0-e.touches[0].clientX;
+  if(dx>30)swEl.classList.add('revealed');
+  else if(dx<-10)swEl.classList.remove('revealed');
+},{passive:true});
+document.addEventListener('touchend',()=>{swX0=null;swEl=null},{passive:true});
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.ec-wrap'))
+    document.querySelectorAll('.ec-wrap.revealed').forEach(w=>w.classList.remove('revealed'));
+});
+
+/* ── Render all ── */
+function renderAll(){renderStats();renderCatBar();renderEntries();updateHealthDot()}
 
 function renderStats(){
-  const total=entries.length;
-  let weak=0,old=0,dups=new Map();
-  const now=Date.now(),OLD_MS=90*24*3600*1000;
+  const tot=entries.length;
+  let weak=0;const dups=new Map();
   entries.forEach(e=>{
-    const s=getStrength(e.password||'');
-    if(s.score<=25)weak++;
-    if(e.updated&&(now-e.updated)>OLD_MS)old++;
-    const pw=e.password||'';if(pw)dups.set(pw,(dups.get(pw)||0)+1);
+    const s=getStr(e.password||'');if(s.sc<=20)weak++;
+    const p=e.password||'';if(p){const a=dups.get(p)||[];a.push(1);dups.set(p,a)}
   });
-  const dupCount=[...dups.values()].filter(n=>n>1).length;
+  const dup=[...dups.values()].filter(a=>a.length>1).length;
   const favs=entries.filter(e=>e.fav).length;
-  $('stats-grid').innerHTML=`
-    <div class="stat-card"><div class="stat-label">Total entries</div><div class="stat-val stat-accent">${total}</div><div class="stat-sub">in vault</div></div>
-    <div class="stat-card"><div class="stat-label">Weak passwords</div><div class="stat-val ${weak?'stat-red':'stat-green'}">${weak}</div><div class="stat-sub">${weak?'need attention':'all good'}</div></div>
-    <div class="stat-card"><div class="stat-label">Reused</div><div class="stat-val ${dupCount?'stat-yellow':'stat-green'}">${dupCount}</div><div class="stat-sub">duplicate passwords</div></div>
-    <div class="stat-card"><div class="stat-label">Favourites</div><div class="stat-val stat-accent">${favs}</div><div class="stat-sub">starred entries</div></div>
-  `;
+  const score=tot?Math.round(Math.max(0,100-weak*15-dup*10)):100;
+  $('stats-row').innerHTML=`
+    <div class="stat-c"><div class="stat-lbl">Total</div><div class="stat-v c-acc">${tot}</div><div class="stat-sub">entries</div></div>
+    <div class="stat-c"><div class="stat-lbl">Score</div><div class="stat-v ${score>=80?'c-grn':score>=50?'c-yel':'c-red'}">${score}</div><div class="stat-sub">security</div></div>
+    <div class="stat-c"><div class="stat-lbl">Weak</div><div class="stat-v ${weak?'c-red':'c-grn'}">${weak}</div><div class="stat-sub">passwords</div></div>
+    <div class="stat-c"><div class="stat-lbl">Favs</div><div class="stat-v c-acc">${favs}</div><div class="stat-sub">starred</div></div>`;
+}
+
+function updateHealthDot(){
+  const weak=entries.filter(e=>getStr(e.password||'').sc<=20).length;
+  const dups=new Map();
+  entries.forEach(e=>{const p=e.password;if(p){const a=dups.get(p)||[];a.push(1);dups.set(p,a)}});
+  const has=weak>0||[...dups.values()].some(a=>a.length>1);
+  $('nd-health').classList.toggle('show',has);
 }
 
 function renderCatBar(){
-  const cats=['All','⭐ Favourites',...new Set(entries.map(e=>e.category))];
-  if(!cats.includes(activeFilter))activeFilter='All';
-  $('cat-bar').innerHTML=cats.map(c=>`<button class="cat-chip${c===activeFilter?' active':''}" onclick="setFilter('${c}')">${c}</button>`).join('');
+  const cats=['All','⭐ Favs',...new Set(entries.map(e=>e.category))];
+  if(!cats.includes(activeF))activeF='All';
+  $('cat-bar').innerHTML=cats.map(c=>`<button class="cat-chip${c===activeF?' on':''}" onclick="setF('${c}')">${c}</button>`).join('');
 }
-window.setFilter=function(c){activeFilter=c;renderCatBar();renderEntries()};
+window.setF=c=>{activeF=c;renderCatBar();renderEntries()};
 
-function sortEntries(arr){
+function sortE(arr){
   return[...arr].sort((a,b)=>{
-    if(sortMode===0)return a.name.localeCompare(b.name);
-    if(sortMode===1)return b.name.localeCompare(a.name);
-    if(sortMode===2)return(b.created||0)-(a.created||0);
-    if(sortMode===3)return(a.created||0)-(b.created||0);
-    if(sortMode===4){return getStrength(a.password||'').score-getStrength(b.password||'').score}
-    return 0;
+    if(sortM===0)return a.name.localeCompare(b.name);
+    if(sortM===1)return b.name.localeCompare(a.name);
+    if(sortM===2)return(b.created||0)-(a.created||0);
+    if(sortM===3)return(a.created||0)-(b.created||0);
+    return getStr(a.password||'').sc-getStr(b.password||'').sc;
   });
 }
 
 function renderEntries(){
-  const search=$('search-inp').value.toLowerCase().trim();
+  const srch=$('srch').value.toLowerCase().trim();
   let filtered=entries.filter(e=>{
-    if(activeFilter==='⭐ Favourites')return e.fav;
-    if(activeFilter!=='All'&&e.category!==activeFilter)return false;
-    if(!search)return true;
-    const inTags=(e.tags||[]).some(t=>t.toLowerCase().includes(search));
-    return(e.name+e.username+(e.url||'')+(e.note||'')).toLowerCase().includes(search)||inTags;
+    if(activeF==='⭐ Favs')return e.fav;
+    if(activeF!=='All'&&e.category!==activeF)return false;
+    if(!srch)return true;
+    return(e.name+e.username+(e.url||'')+(e.note||'')+(e.tags||[]).join(' ')).toLowerCase().includes(srch);
   });
-  filtered=sortEntries(filtered);
-  const list=$('entries-list');
+  filtered=sortE(filtered);
+  const list=$('elist');
   if(!filtered.length){
-    list.innerHTML=`<div class="empty-state"><i class="ti ti-shield-off"></i><h3>${entries.length?'No matching entries':'Vault is empty'}</h3><p>${entries.length?'Try a different search term or category.':'Click "Add entry" to save your first password.'}</p></div>`;
+    list.innerHTML=`<div class="empty"><i class="ti ti-shield-off"></i><h3>${entries.length?'No matches':'Vault is empty'}</h3><p>${entries.length?'Try a different search or category.':'Tap + to add your first password.'}</p></div>`;
     return;
   }
   list.innerHTML=filtered.map(e=>{
-    const st=getStrength(e.password||'');
-    const sc=st.score<=25?'w':st.score<=50?'f':st.score<=75?'g':'s';
+    const st=getStr(e.password||'');
+    const sc=st.sc<=20?'w':st.sc<=50?'f':st.sc<=75?'g':'s';
     const cfg=CAT[e.category]||CAT.Other;
-    const now=Date.now(),OLD_MS=90*24*3600*1000;
-    const isOld=e.updated&&(now-e.updated)>OLD_MS;
-    const ageDays=e.updated?Math.floor((now-e.updated)/86400000):null;
-    const showWarn=settings.strengthWarn&&st.score<=25;
-    const tags=(e.tags||[]).slice(0,3).map(t=>`<span class="tag" style="font-size:10px;padding:1px 6px">${esc(t)}</span>`).join('');
-    return`<div class="entry-card" onclick="openEdit('${e.id}')">
-      <div class="entry-avatar ${cfg.av}">${cfg.emoji}${e.fav?'<span style="position:absolute;top:-4px;right:-4px;font-size:10px">⭐</span>':''}</div>
-      <div class="entry-body">
-        <div class="entry-name">${esc(e.name)}</div>
-        <div class="entry-meta">
-          ${e.username?`<span class="entry-user">${esc(e.username)}</span>`:''}
-          ${e.url?`<span class="entry-url">${esc(e.url.replace(/^https?:\/\//,'').split('/')[0])}</span>`:''}
-          ${isOld&&ageDays!==null?`<span class="entry-age"><i class="ti ti-clock" style="font-size:10px"></i> ${ageDays}d ago</span>`:''}
-          ${tags}
+    const now=Date.now();
+    const old=e.updated&&(now-e.updated)>90*864e5;
+    const ageDays=e.updated?Math.floor((now-e.updated)/864e5):null;
+    const showW=settings.sw&&st.sc<=20;
+    const tags=(e.tags||[]).slice(0,2).map(t=>`<span class="tag" style="font-size:10px;padding:2px 7px">${esc(t)}</span>`).join('');
+    return`<div class="ec-wrap">
+      <div class="ec" onclick="openEdit('${e.id}')">
+        <div class="e-av ${cfg.ab}">${cfg.e}${e.fav?'<span style="position:absolute;top:-3px;right:-3px;font-size:10px">⭐</span>':''}</div>
+        <div class="e-body">
+          <div class="e-name">${esc(e.name)}</div>
+          <div class="e-meta">
+            ${e.username?`<span class="e-user">${esc(e.username)}</span>`:''}
+            ${e.url?`<span class="e-url">${esc(e.url.replace(/^https?:\/\//,'').split('/')[0])}</span>`:''}
+            ${old&&ageDays!==null?`<span class="e-age"><i class="ti ti-clock" style="font-size:10px"></i>${ageDays}d</span>`:''}
+            ${tags}
+          </div>
+        </div>
+        <div class="e-right">
+          ${showW?'<span class="weak-badge">Weak</span>':''}
+          <span class="cat-badge ${cfg.cb}">${e.category}</span>
+          <span class="sdot s${sc}" title="${{w:'Weak',f:'Fair',g:'Good',s:'Strong'}[sc]}"></span>
+          <button class="btn-icon" title="Copy username" onclick="cpUser('${e.id}',event)" style="font-size:14px"><i class="ti ti-user"></i></button>
+          <button class="btn-icon" title="Copy password" onclick="cpPw('${e.id}',event)"><i class="ti ti-copy"></i></button>
         </div>
       </div>
-      <div class="entry-right">
-        ${showWarn?'<span class="breach-badge">Weak</span>':''}
-        <span class="cat-badge ${cfg.cls}">${e.category}</span>
-        <span class="strength-dot sd-${sc}" title="${{w:'Weak',f:'Fair',g:'Good',s:'Strong'}[sc]} password"></span>
-        <button class="btn-icon" title="Copy username" onclick="copyUsername('${e.id}',event)" style="font-size:14px"><i class="ti ti-user"></i></button>
-        <button class="btn-icon" title="Copy password" onclick="copyPassword('${e.id}',event)"><i class="ti ti-copy"></i></button>
+      <div class="ec-actions">
+        <button class="ec-act-btn act-copy" onclick="cpPw('${e.id}',event)" title="Copy"><i class="ti ti-copy"></i></button>
+        <button class="ec-act-btn act-edit" onclick="openEdit('${e.id}')" title="Edit"><i class="ti ti-pencil"></i></button>
+        <button class="ec-act-btn act-del" onclick="quickDel('${e.id}')" title="Delete"><i class="ti ti-trash"></i></button>
       </div>
     </div>`;
   }).join('');
 }
 
+window.quickDel=async function(id){
+  if(!confirm('Delete this entry?'))return;
+  entries=entries.filter(x=>x.id!==id);
+  await saveVault();renderAll();showToast('Entry deleted');
+};
+
 /* ── Health ── */
 function renderHealth(){
-  const now=Date.now(),OLD_MS=90*24*3600*1000;
-  let weak=[],old=[],dupMap=new Map(),issues=[];
+  const now=Date.now(),OLD=90*864e5;
+  let weak=[],old=[],dM=new Map(),issues=[];
   entries.forEach(e=>{
-    const s=getStrength(e.password||'');
-    if(s.score<=25)weak.push(e);
-    if(e.updated&&(now-e.updated)>OLD_MS)old.push(e);
-    const pw=e.password||'';if(pw){const arr=dupMap.get(pw)||[];arr.push(e);dupMap.set(pw,arr)}
+    const s=getStr(e.password||'');if(s.sc<=20)weak.push(e);
+    if(e.updated&&(now-e.updated)>OLD)old.push(e);
+    const p=e.password||'';if(p){const a=dM.get(p)||[];a.push(e);dM.set(p,a)}
   });
-  const dups=[...dupMap.values()].filter(a=>a.length>1).flat();
-  const score=entries.length?Math.round(Math.max(0,100-weak.length*15-old.length*5-dups.length/2*10)):0;
-  $('health-grid').innerHTML=`
-    <div class="health-card"><div class="health-num" style="color:${score>=80?'var(--green)':score>=50?'var(--yellow)':'var(--red)'}">${score}</div><div class="health-lbl">Security score</div></div>
-    <div class="health-card"><div class="health-num" style="color:${weak.length?'var(--red)':'var(--green)'}">${weak.length}</div><div class="health-lbl">Weak passwords</div></div>
-    <div class="health-card"><div class="health-num" style="color:${old.length?'var(--yellow)':'var(--green)'}">${old.length}</div><div class="health-lbl">Old (90+ days)</div></div>
-  `;
-  weak.forEach(e=>issues.push({e,type:'weak',icon:'🔓',desc:'This password is too weak and easy to guess',cls:'type-weak',label:'Weak'}));
-  old.forEach(e=>{if(!issues.find(i=>i.e.id===e.id&&i.type==='old'))issues.push({e,type:'old',icon:'🕐',desc:'Password not updated in over 90 days',cls:'type-old',label:'Old'})});
-  dups.forEach(e=>{if(!issues.find(i=>i.e.id===e.id&&i.type==='dup'))issues.push({e,type:'dup',icon:'♊',desc:'This password is reused across multiple accounts',cls:'type-dup',label:'Reused'})});
-  const cont=$('health-issues');
-  if(!issues.length){cont.innerHTML='<div class="empty-state" style="padding:2rem 1rem"><i class="ti ti-shield-check" style="color:var(--green)"></i><h3 style="color:var(--green)">All good!</h3><p>No security issues found in your vault.</p></div>';return}
-  cont.innerHTML=`<div class="section-title"><i class="ti ti-alert-triangle" style="color:var(--yellow)"></i>Issues found (${issues.length})</div>`+
-    issues.map(({e,icon,desc,cls,label})=>`
-      <div class="issue-card" onclick="openEdit('${e.id}')">
-        <div class="issue-icon">${icon}</div>
-        <div class="issue-body"><div class="issue-name">${esc(e.name)}</div><div class="issue-desc">${desc}</div></div>
-        <span class="issue-type ${cls}">${label}</span>
-      </div>`).join('');
+  const dups=[...dM.values()].filter(a=>a.length>1).flat();
+  const score=entries.length?Math.round(Math.max(0,100-weak.length*15-old.length*5-dups.length/2*10)):100;
+  $('h-grid').innerHTML=`
+    <div class="h-card"><div class="h-num" style="color:${score>=80?'var(--green)':score>=50?'var(--yellow)':'var(--red)'}">${score}</div><div class="h-lbl">Security score</div><div class="h-bar"><div class="h-bar-fill" style="width:${score}%;background:${score>=80?'var(--green)':score>=50?'var(--yellow)':'var(--red)'}"></div></div></div>
+    <div class="h-card"><div class="h-num" style="color:${weak.length?'var(--red)':'var(--green)'}">${weak.length}</div><div class="h-lbl">Weak passwords</div><div class="h-bar"><div class="h-bar-fill" style="width:${entries.length?weak.length/entries.length*100:0}%;background:var(--red)"></div></div></div>
+    <div class="h-card"><div class="h-num" style="color:${old.length?'var(--yellow)':'var(--green)'}">${old.length}</div><div class="h-lbl">Old (90+ days)</div><div class="h-bar"><div class="h-bar-fill" style="width:${entries.length?old.length/entries.length*100:0}%;background:var(--yellow)"></div></div></div>`;
+  weak.forEach(e=>issues.push({e,icon:'🔓',desc:'Too weak — easily guessable',cls:'it-w',lbl:'Weak'}));
+  old.forEach(e=>{if(!issues.find(i=>i.e.id===e.id&&i.lbl==='Old'))issues.push({e,icon:'🕐',desc:'Not updated in 90+ days',cls:'it-o',lbl:'Old'})});
+  dups.forEach(e=>{if(!issues.find(i=>i.e.id===e.id&&i.lbl==='Reused'))issues.push({e,icon:'♊',desc:'Reused across multiple accounts',cls:'it-d',lbl:'Reused'})});
+  const c=$('h-issues');
+  if(!issues.length){c.innerHTML='<div class="empty" style="padding:2rem 1rem"><i class="ti ti-shield-check" style="color:var(--green);opacity:1"></i><h3 style="color:var(--green)">All clear!</h3><p>No security issues found.</p></div>';return}
+  c.innerHTML=`<div class="sec-title"><i class="ti ti-alert-triangle" style="color:var(--yellow)"></i>Issues found (${issues.length})</div>`+
+    issues.map(({e,icon,desc,cls,lbl})=>`<div class="issue-card" onclick="openEdit('${e.id}')"><div class="issue-icon">${icon}</div><div class="issue-body"><div class="issue-name">${esc(e.name)}</div><div class="issue-desc">${desc}</div></div><span class="issue-type ${cls}">${lbl}</span></div>`).join('');
 }
 
 /* ── Import / Export ── */
-$('import-file').addEventListener('change',async e=>{
-  const file=e.target.files[0];if(!file)return;
+$('if').addEventListener('change',async ev=>{
+  const file=ev.target.files[0];if(!file)return;
   const text=await file.text();
   try{
-    let imported=[];
-    if(file.name.endsWith('.json')){
-      const data=JSON.parse(text);
-      if(data.entries)imported=data.entries;
-      else if(Array.isArray(data))imported=data;
-    }else{
-      // CSV parser — supports LastPass, Bitwarden, 1Password, generic
+    let imp=[];
+    if(file.name.endsWith('.json')){const d=JSON.parse(text);imp=d.entries||d}
+    else{
       const lines=text.split('\n').filter(l=>l.trim());
-      const headers=lines[0].split(',').map(h=>h.trim().toLowerCase().replace(/"/g,''));
-      const nameIdx=headers.findIndex(h=>['name','title','label'].includes(h));
-      const urlIdx=headers.findIndex(h=>['url','website','login_uri'].includes(h));
-      const userIdx=headers.findIndex(h=>['username','login_username','user','email'].includes(h));
-      const pwIdx=headers.findIndex(h=>['password','login_password','pass'].includes(h));
-      const noteIdx=headers.findIndex(h=>['notes','note','extra'].includes(h));
+      const hdr=lines[0].split(',').map(h=>h.trim().toLowerCase().replace(/"/g,''));
+      const ni=hdr.findIndex(h=>['name','title','label'].includes(h));
+      const ui=hdr.findIndex(h=>['username','login_username','user','email'].includes(h));
+      const pi=hdr.findIndex(h=>['password','login_password','pass'].includes(h));
+      const urli=hdr.findIndex(h=>['url','website','login_uri'].includes(h));
+      const noi=hdr.findIndex(h=>['notes','note','extra'].includes(h));
       for(let i=1;i<lines.length;i++){
-        const cols=parseCSVLine(lines[i]);
-        const name=cols[nameIdx]||`Import ${i}`;
-        const pw=cols[pwIdx]||'';
-        if(!pw)continue;
-        imported.push({id:crypto.randomUUID(),name,username:cols[userIdx]||'',url:cols[urlIdx]||'',password:pw,note:cols[noteIdx]||'',category:'Other',tags:[],created:Date.now(),updated:Date.now()});
+        const c=csvLine(lines[i]);const pw=c[pi]||'';if(!pw)continue;
+        imp.push({id:crypto.randomUUID(),name:c[ni]||`Import ${i}`,username:c[ui]||'',url:c[urli]||'',password:pw,note:c[noi]||'',category:'Other',tags:[],created:Date.now(),updated:Date.now()});
       }
     }
-    if(!imported.length){showToast('No valid entries found in file','error');return}
-    // Merge — skip duplicates by name+username
+    if(!imp.length){showToast('No valid entries found','error');return}
     let added=0;
-    imported.forEach(imp=>{
-      const exists=entries.some(e=>e.name===imp.name&&e.username===imp.username);
-      if(!exists){entries.unshift({...imp,id:imp.id||crypto.randomUUID()});added++}
+    imp.forEach(i=>{
+      if(!entries.some(e=>e.name===i.name&&e.username===i.username)){entries.unshift({...i,id:i.id||crypto.randomUUID()});added++}
     });
-    await saveVault();renderAll();showToast(`Imported ${added} entries (${imported.length-added} duplicates skipped)`);
-  }catch(err){showToast('Import failed: '+err.message,'error')}
-  e.target.value='';
+    await saveVault();renderAll();showToast(`Imported ${added} entries`);
+  }catch(e){showToast('Import failed: '+e.message,'error')}
+  ev.target.value='';
 });
 
-function parseCSVLine(line){
-  const cols=[],re=/("(?:[^"]|"")*"|[^,]*)/g;let m;
+function csvLine(line){
+  const c=[],re=/("(?:[^"]|"")*"|[^,]*)/g;let m;
   while((m=re.exec(line))!==null&&m.index<line.length){
-    let v=m[1];if(v.startsWith('"')&&v.endsWith('"'))v=v.slice(1,-1).replace(/""/g,'"');cols.push(v);
+    let v=m[1];if(v.startsWith('"')&&v.endsWith('"'))v=v.slice(1,-1).replace(/""/g,'"');c.push(v);
   }
-  return cols;
+  return c;
 }
 
-// Drag and drop import
-$('import-zone').addEventListener('dragover',e=>{e.preventDefault();$('import-zone').classList.add('drag-over')});
-$('import-zone').addEventListener('dragleave',()=>$('import-zone').classList.remove('drag-over'));
-$('import-zone').addEventListener('drop',e=>{
-  e.preventDefault();$('import-zone').classList.remove('drag-over');
-  const file=e.dataTransfer.files[0];if(!file)return;
-  const input=$('import-file');
-  const dt=new DataTransfer();dt.items.add(file);input.files=dt.files;
-  input.dispatchEvent(new Event('change'));
+$('iz').addEventListener('dragover',e=>{e.preventDefault();$('iz').classList.add('drag-over')});
+$('iz').addEventListener('dragleave',()=>$('iz').classList.remove('drag-over'));
+$('iz').addEventListener('drop',e=>{
+  e.preventDefault();$('iz').classList.remove('drag-over');
+  const f=e.dataTransfer.files[0];if(!f)return;
+  const dt=new DataTransfer();dt.items.add(f);$('if').files=dt.files;
+  $('if').dispatchEvent(new Event('change'));
 });
 
-window.exportJSON=function(){
-  const data=JSON.stringify({version:'svp2',exported:new Date().toISOString(),entries},null,2);
-  download('securevault-backup.json','application/json',data);
-  showToast('JSON backup downloaded');
+window.expJSON=function(){
+  const d=JSON.stringify({version:'svp3',exported:new Date().toISOString(),entries},null,2);
+  dl('securevault-backup.json','application/json',d);
+  showToast('Backup downloaded');
 };
-window.exportCSV=function(){
-  const hdr='name,username,password,url,category,notes,tags\n';
-  const rows=entries.map(e=>[e.name,e.username,e.password,e.url||'',e.category,e.note||'',(e.tags||[]).join(';')].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
-  download('securevault-export.csv','text/csv',hdr+rows);
-  showToast('CSV exported — store it securely!','warn');
+window.expCSV=function(){
+  const h='name,username,password,url,category,notes,tags\n';
+  const r=entries.map(e=>[e.name,e.username,e.password,e.url||'',e.category,e.note||'',(e.tags||[]).join(';')].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  dl('securevault-export.csv','text/csv',h+r);
+  showToast('CSV exported — store securely!','warn');
 };
-function download(filename,mime,content){
-  const a=document.createElement('a');a.href='data:'+mime+';charset=utf-8,'+encodeURIComponent(content);a.download=filename;a.click();
+function dl(fn,mime,content){
+  const a=document.createElement('a');
+  a.href='data:'+mime+';charset=utf-8,'+encodeURIComponent(content);
+  a.download=fn;a.click();
 }
 
 /* ── Clear vault ── */
-window.confirmClearVault=async function(){
-  if(!confirm('DELETE ALL vault data? This cannot be undone. Type YES to confirm.'))return;
-  const ans=prompt('Type YES to confirm deletion:');
-  if(ans!=='YES'){showToast('Cancelled','info');return}
+window.clearVault=async function(){
+  if(!confirm('Delete ALL vault data? This cannot be undone.'))return;
+  const a=prompt('Type DELETE to confirm:');
+  if(a!=='DELETE'){showToast('Cancelled','info');return}
   entries=[];await saveVault();renderAll();showToast('Vault cleared','warn');
 };
 
+/* ── Ripple effect ── */
+function addRipple(el,ev){
+  const r=el.getBoundingClientRect();
+  const x=(ev?.clientX??r.left+r.width/2)-r.left;
+  const y=(ev?.clientY??r.top+r.height/2)-r.top;
+  const s=Math.max(r.width,r.height)*2;
+  const span=document.createElement('span');
+  span.className='ripple-el';
+  Object.assign(span.style,{width:s+'px',height:s+'px',left:(x-s/2)+'px',top:(y-s/2)+'px'});
+  el.appendChild(span);
+  span.addEventListener('animationend',()=>span.remove());
+}
+document.addEventListener('click',ev=>{
+  const el=ev.target.closest('.btn-primary,.btn-ghost,.ec');
+  if(el)addRipple(el,ev);
+});
+
 /* ── Keyboard shortcuts ── */
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape')closeModal();
+  if(e.key==='Escape')closeSheet();
   if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;
-  const main=$('main-screen').classList.contains('active');
-  if(main&&(e.ctrlKey||e.metaKey)){
-    if(e.key==='n'){e.preventDefault();openAddModal()}
-    if(e.key==='f'){e.preventDefault();$('search-inp').focus()}
-    if(e.key==='l'){e.preventDefault();lockVault();showToast('Vault locked','info')}
+  if($('main').classList.contains('active')&&(e.ctrlKey||e.metaKey)){
+    if(e.key==='n'){e.preventDefault();openAdd()}
+    if(e.key==='f'){e.preventDefault();$('srch').focus()}
+    if(e.key==='l'){e.preventDefault();lockV();showToast('Vault locked','info')}
   }
 });
-$('add-btn').addEventListener('click',openAddModal);
-$('search-inp').addEventListener('input',renderEntries);
 
-loadSettings();
-liveGenerate();
+/* ── Wire up remaining buttons ── */
+$('fab').addEventListener('click',openAdd);
+$('srch').addEventListener('input',renderEntries);
+
+/* ── Init ── */
+loadSt();
+liveGen();
 updateBioUI();
 </script>
 </body>
